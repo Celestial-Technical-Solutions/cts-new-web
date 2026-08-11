@@ -5,13 +5,21 @@ document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () 
 // Replace each placeholder below with the real Stripe Payment Link for that CTS service.
 const stripeLinks = {
   "Strategic Technology Advisory": "",
-  "Infrastructure Health Check": "",
-  "Data Center Consulting": "",
-  "Cloud Infrastructure Assessment": ""
+  "Infrastructure Health Check": "https://buy.stripe.com/5kQ9AL75ufNS7hfaMTeZ208",
+  "Data Center Consulting": "https://buy.stripe.com/eVq5kvdtS6di6dbbQXeZ209",
+  "Cloud Infrastructure Assessment": "https://buy.stripe.com/eVq9ALcpOgRWatr9IPeZ20a"
 };
 document.querySelectorAll('.pay').forEach(btn => btn.addEventListener('click', e => {
   const url = stripeLinks[btn.dataset.service];
   if (!url) { e.preventDefault(); alert('Stripe checkout for ' + btn.dataset.service + ' is ready to connect. Add the Payment Link in script.js before launch.'); }
+}));
+
+document.querySelectorAll('a[data-service]').forEach(btn => btn.addEventListener('click', e => {
+  const selectedService = btn.dataset.service;
+  const serviceSelect = document.querySelector('select[name="service"]');
+  if (serviceSelect) {
+    serviceSelect.value = selectedService;
+  }
 }));
 
 document.getElementById('contactForm').addEventListener('submit', e => {
