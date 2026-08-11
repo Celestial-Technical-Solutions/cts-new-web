@@ -12,9 +12,9 @@
 
 <body>
   <header class="site-header">
-    <a class="brand" href="#home" aria-label="CTS Home">
-      <span class="brand-mark">CTS</span>
-      <span class="brand-sub">Celestial Technical Solutions</span>
+    <a class="brand" href="#home" aria-label="Celestial Technical Solutions Home">
+      <img src="assets/Gold Logo Transparent with Words.svg" alt="Celestial Technical Solutions logo"
+        class="brand-logo">
     </a>
     <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
     <nav class="nav">
@@ -26,7 +26,11 @@
 
   <main>
     <section id="home" class="hero">
-      <div class="hero-overlay"></div>
+      <!-- <div class="hero-overlay"></div> -->
+      <div class="hero-art" aria-hidden="true">
+        <img src="assets/website intro.png" alt="Website intro illustration" class="hero-image">
+        <div class="grid"></div>
+      </div>
       <div class="hero-content">
         <p class="eyebrow">ENTERPRISE TECHNOLOGY. STRATEGIC SOLUTIONS.</p>
         <h1>BUILDING INFRASTRUCTURE<br><span>POWERING INNOVATION</span></h1>
@@ -35,10 +39,7 @@
         <div class="actions"><a class="btn btn-gold" href="#services">Explore Services</a><a class="btn btn-outline"
             href="#contact">Contact Us</a></div>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="cloud">☁<span>↑</span></div>
-        <div class="grid"></div>
-      </div>
+
     </section>
 
     <section id="services" class="section">
@@ -132,8 +133,7 @@
       <div>
         <p class="eyebrow">START A CONVERSATION</p>
         <h2>Ready to Build What's Next?</h2>
-        <p>Tell CTS what you're working on and which service you're interested in. This form is ready for Netlify Forms
-          or can be connected to your CRM workflow.</p>
+        <p>Tell CTS what you're working on and which service you're interested in.</p>
       </div>
       <form id="contactForm" name="contact" method="POST" data-netlify="true" netlify="true">
         <input type="hidden" name="form-name" value="contact">
@@ -172,7 +172,7 @@
     </div>
     <div>
       <h4>Contact</h4>
-      <p>Jackson, Tennessee<br><span class="muted">Add verified CTS phone and email before launch.</span></p>
+      <p><a href="mailto:info@celestechsolutions.com">info@celestechsolutions.com</a></p>
     </div>
     <div class="copyright">© 2026 Celestial Technical Solutions. All rights reserved. <span>Built with integrity.
         Delivered with excellence.</span></div>
