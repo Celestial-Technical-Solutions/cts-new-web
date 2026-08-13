@@ -22,21 +22,24 @@ document.querySelectorAll('a[data-service]').forEach(btn => btn.addEventListener
   }
 }));
 
-document.getElementById('contactForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const form = new FormData(e.target);
-  const name = form.get('name') || 'No name provided';
-  const email = form.get('email') || 'No email provided';
-  const company = form.get('company') || 'No company provided';
-  const service = form.get('service') || 'No service selected';
-  const message = form.get('message') || 'No message provided';
-  const subject = encodeURIComponent('CTS Contact Form Submission');
-  const body = encodeURIComponent(
-    `Name: ${name}\nEmail: ${email}\nCompany: ${company}\nService: ${service}\n\nMessage:\n${message}`
-  );
-  window.location.href = `mailto:info@celestechsolutions.com?subject=${subject}&body=${body}`;
-  document.getElementById('formStatus').textContent = 'Your email client should open shortly so you can send this message to info@celestechsolutions.com.';
-});
+const mainContactForm = document.getElementById('contactForm');
+if (mainContactForm) {
+  mainContactForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const form = new FormData(e.target);
+    const name = form.get('name') || 'No name provided';
+    const email = form.get('email') || 'No email provided';
+    const company = form.get('company') || 'No company provided';
+    const service = form.get('service') || 'No service selected';
+    const message = form.get('message') || 'No message provided';
+    const subject = encodeURIComponent('CTS Contact Form Submission');
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nCompany: ${company}\nService: ${service}\n\nMessage:\n${message}`
+    );
+    window.location.href = `mailto:info@celestechsolutions.com?subject=${subject}&body=${body}`;
+    document.getElementById('formStatus').textContent = 'Your email client should open shortly so you can send this message to info@celestechsolutions.com.';
+  });
+}
 
 const chatbotToggle = document.getElementById('chatbotToggle');
 const chatbotPanel = document.getElementById('ctsChatbot');
@@ -46,6 +49,27 @@ const chatbotInput = document.getElementById('chatbotInput');
 const chatbotMessages = document.getElementById('chatbotMessages');
 const chatbotChips = document.querySelectorAll('.chatbot-chip');
 const chatbotCta = document.getElementById('chatbotCta');
+const chatbotBookButton = document.querySelector('.chatbot-book-button');
+const chatbotLeadForm = document.getElementById('chatbotLeadForm');
+
+const chatServiceMap = {
+  cloud: 'Cloud Infrastructure Assessment',
+  aws: 'Cloud Infrastructure Assessment',
+  azure: 'Cloud Infrastructure Assessment',
+  gcp: 'Cloud Infrastructure Assessment',
+  cost: 'Cloud Infrastructure Assessment',
+  spend: 'Cloud Infrastructure Assessment',
+  ai: 'Custom Enterprise Solutions',
+  automation: 'Custom Enterprise Solutions',
+  workflow: 'Custom Enterprise Solutions',
+  strategy: 'Strategic Technology Advisory',
+  roadmap: 'Strategic Technology Advisory',
+  infrastructure: 'Infrastructure Health Check',
+  data: 'Data Center Consulting',
+  cooling: 'Data Center Consulting',
+  power: 'Data Center Consulting',
+  modernization: 'IT Infrastructure Migration Planning'
+};
 
 const chatbotReplies = {
   default: 'A strong next step is to identify the business problem behind the technology decision. We can help with cloud efficiency, AI automation, infrastructure modernization, and IT strategy. Tell me what challenge you are trying to solve, and I’ll point you in the right direction.',
@@ -108,6 +132,61 @@ function triggerChatReply(messageText) {
   }, 220);
 }
 
+function getSuggestedService(topicText) {
+  const text = (topicText || '').toLowerCase();
+
+  for (const [keyword, serviceName] of Object.entries(chatServiceMap)) {
+    if (text.includes(keyword)) {
+      return serviceName;
+    }
+  }
+
+  return 'Strategic Technology Advisory';
+}
+
+function openLeadCaptureForm() {
+  if (chatbotCta) {
+    chatbotCta.hidden = false;
+  }
+  if (chatbotLeadForm) {
+    chatbotLeadForm.hidden = false;
+    const firstInput = chatbotLeadForm.querySelector('input');
+    if (firstInput) {
+      setTimeout(() => firstInput.focus(), 100);
+    }
+  }
+}
+
+function submitChatLead(form) {
+  const formData = new FormData(form);
+  const name = formData.get('chatbotName') || 'No name provided';
+  const email = formData.get('chatbotEmail') || 'No email provided';
+  const company = formData.get('chatbotCompany') || 'No company provided';
+  const selectedGoal = formData.get('chatbotGoal') || 'General consultation';
+  const suggestedService = getSuggestedService(`${selectedGoal} ${formData.get('chatbotInput') || ''}`);
+
+  if (mainContactForm) {
+    mainContactForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    mainContactForm.name.value = name;
+    mainContactForm.email.value = email;
+    mainContactForm.company.value = company;
+    mainContactForm.message.value = `Lead captured from CTS Chat Agent. Goal: ${selectedGoal}. Please contact me about a consultation.`;
+    if (mainContactForm.service) {
+      mainContactForm.service.value = suggestedService;
+    }
+    mainContactForm.requestSubmit();
+  } else {
+    const subject = encodeURIComponent('CTS Chat Lead Submission');
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\nCompany: ${company}\nLead Source: CTS Chat Agent\nService: ${suggestedService}\nGoal: ${selectedGoal}\n\nPlease contact me about a consultation.`
+    );
+    window.location.href = `mailto:info@celestechsolutions.com?subject=${subject}&body=${body}`;
+  }
+
+  form.reset();
+  form.hidden = true;
+}
+
 if (chatbotToggle && chatbotPanel) {
   chatbotToggle.addEventListener('click', () => {
     const isHidden = chatbotPanel.hasAttribute('hidden');
@@ -128,7 +207,14 @@ if (chatbotToggle && chatbotPanel) {
       if (chatbotCta) {
         chatbotCta.hidden = true;
       }
+      if (chatbotLeadForm) {
+        chatbotLeadForm.hidden = true;
+      }
     });
+  }
+
+  if (chatbotBookButton) {
+    chatbotBookButton.addEventListener('click', openLeadCaptureForm);
   }
 
   chatbotChips.forEach(button => {
@@ -139,6 +225,13 @@ if (chatbotToggle && chatbotPanel) {
       chatbotInput.value = '';
     });
   });
+
+  if (chatbotLeadForm) {
+    chatbotLeadForm.addEventListener('submit', e => {
+      e.preventDefault();
+      submitChatLead(chatbotLeadForm);
+    });
+  }
 
   chatbotForm.addEventListener('submit', e => {
     e.preventDefault();

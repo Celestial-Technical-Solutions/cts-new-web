@@ -48,14 +48,22 @@
     <section id="services" class="section">
       <p class="eyebrow center">CLOUD • AI • TECHNOLOGY CONSULTING</p>
       <h2>High-Impact Solutions for Cloud, AI, and IT Operations</h2>
-      <div class="service-grid">
-        <article class="card">
+      <div class="service-grid flagship-grid">
+        <article class="card flagship-card">
           <div class="icon">◉</div>
           <h3>Cloud Cost Optimization</h3>
           <p>Reduce AWS, Azure, and GCP spending with targeted assessments, rightsizing, commitment planning, and FinOps
             governance.</p>
           <a class="btn btn-gold" href="cloud-cost-optimization/" data-service="Strategic Technology Advisory">Learn
             More</a>
+        </article>
+        <article class="card flagship-card">
+          <div class="icon">✦</div>
+          <h3>AI SuperAgents for Business</h3>
+          <p>Deploy AI agents that engage customers, qualify leads, automate workflows, support teams, and execute
+            operations around the clock.</p>
+          <a class="btn btn-gold" href="ai-superagents/" data-service="Custom Enterprise Solutions">Explore AI
+            SuperAgents</a>
         </article>
         <article class="card">
           <div class="icon">♢</div>
@@ -218,9 +226,13 @@
     <div>
       <h4>Contact</h4>
       <p><a href="mailto:info@celestechsolutions.com">info@celestechsolutions.com</a></p>
+      <p><a href="privacy-policy.html">Privacy Policy</a></p>
+      <p><a href="terms.html">Terms of Use</a></p>
     </div>
-    <div class="copyright">© 2026 Celestial Technical Solutions. All rights reserved. <span>Built with integrity.
-        Delivered with excellence.</span></div>
+    <div class="copyright">
+      <span>© 2026 Celestial Technical Solutions. All rights reserved.</span>
+      <span>Built with integrity. Delivered with excellence.</span>
+    </div>
   </footer>
 
   <div class="chatbot-widget" aria-live="polite">
@@ -254,10 +266,37 @@
       <div class="chatbot-cta" id="chatbotCta" hidden>
         <p>Need a tailored recommendation?</p>
         <div class="chatbot-cta-actions">
-          <a href="#contact" class="btn btn-gold">Book a 15-min call</a>
+          <button type="button" class="btn btn-gold chatbot-book-button">Book a 15-min call</button>
           <a href="mailto:info@celestechsolutions.com?subject=CTS%20Consultation%20Request"
             class="btn btn-outline">Email CTS</a>
         </div>
+
+        <form class="chatbot-lead-form" id="chatbotLeadForm" hidden>
+          <label>
+            <span>What kind of help do you need?</span>
+            <select name="chatbotGoal" required>
+              <option value="">Select an option</option>
+              <option value="Cloud cost review">Cloud cost review</option>
+              <option value="AI automation">AI automation</option>
+              <option value="IT strategy">IT strategy</option>
+              <option value="Infrastructure modernization">Infrastructure modernization</option>
+              <option value="General consultation">General consultation</option>
+            </select>
+          </label>
+          <label>
+            <span>Name</span>
+            <input type="text" name="chatbotName" autocomplete="name" required>
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" name="chatbotEmail" autocomplete="email" required>
+          </label>
+          <label>
+            <span>Company</span>
+            <input type="text" name="chatbotCompany" autocomplete="organization" required>
+          </label>
+          <button type="submit" class="btn btn-gold">Send my details</button>
+        </form>
       </div>
 
       <form class="chatbot-form" id="chatbotForm">
