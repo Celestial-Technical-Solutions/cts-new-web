@@ -72,12 +72,12 @@ const chatServiceMap = {
 };
 
 const chatbotReplies = {
-  default: 'A strong next step is to identify the business problem behind the technology decision. We can help with cloud efficiency, AI automation, infrastructure modernization, and IT strategy. Tell me what challenge you are trying to solve, and I’ll point you in the right direction.',
-  services: 'CTS helps businesses with strategic technology advisory, infrastructure assessments, cloud modernization, AI automation, and operational improvement planning. If you want the best fit, tell me whether you are focused on cost, speed, automation, or reliability.',
-  cloud: 'Cloud cost and performance issues are often a sign that infrastructure needs better design, usage visibility, or modernization. We help organizations reduce spend, improve resilience, and align cloud decisions to business goals.',
+  default: 'A strong next step is to identify the business problem behind the technology decision. We help organizations reduce cloud spend, automate operations, and deploy AI solutions that improve efficiency and growth. Tell me what challenge you are trying to solve, and I’ll point you in the right direction.',
+  services: 'CTS helps businesses with strategic technology advisory, infrastructure assessments, cloud modernization, AI automation, and AI SuperAgents for business operations. If you want the best fit, tell me whether you are focused on cost, speed, automation, or resilience.',
+  cloud: 'Cloud cost and performance issues often point to inefficiencies in design, usage, or governance. We help organizations reduce spend, improve resilience, and align cloud decisions to business outcomes.',
   data: 'Data center and infrastructure challenges can impact cost, uptime, and growth. We evaluate capacity, efficiency, modernization opportunities, and long-term operational strategy to help teams make smarter infrastructure decisions.',
-  ai: 'AI automation can streamline repetitive work, improve lead follow-up, and help teams move faster. We design practical AI and workflow solutions that support sales, operations, and service delivery without adding unnecessary complexity.',
-  contact: 'The easiest next step is to fill out the contact form or email info@celestechsolutions.com with a short overview of your goals. We can recommend the right engagement based on your current situation.'
+  ai: 'AI automation can streamline repetitive work, improve lead follow-up, and help teams move faster. We design practical AI and workflow solutions that support sales, operations, and service delivery without unnecessary complexity.',
+  contact: 'The easiest next step is to speak with the team or send a short overview to info@celestechsolutions.com. We can recommend the right engagement based on your current situation.'
 };
 
 function addChatMessage(text, sender = 'bot') {

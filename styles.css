@@ -25,11 +25,12 @@ a {
     align-items: center;
     padding: 0 4%;
     gap: 32px;
-    background: #000000;
+    background: rgba(0, 0, 0, 0.92);
     border-bottom: 1px solid #242424;
     position: sticky;
     top: 0;
-    z-index: 20
+    z-index: 20;
+    backdrop-filter: blur(10px)
 }
 
 .brand {
@@ -114,26 +115,29 @@ a {
 
 .hero-content {
     z-index: 2;
-    padding: 16px 0 70px 4%;
+    padding: 32px 0 70px 4%;
     max-width: 720px;
 }
 
 .eyebrow {
-    color: #ffffff;
-    font-size: 12px;
+    color: #f3d98e;
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: .5px
+    letter-spacing: .18em;
+    text-transform: uppercase
 }
 
 .hero h1 {
-    font-size: 48px;
-    line-height: 1.05;
+    font-size: clamp(2.8rem, 5vw, 4.7rem);
+    line-height: 0.95;
     margin: 15px 0 22px;
     color: #ffffff;
+    letter-spacing: -0.06em;
+    max-width: 620px
 }
 
 .hero h1 span {
-    color: #ffffff
+    color: #f4c64d
 }
 
 .lead {
@@ -184,9 +188,11 @@ a {
 
 .section h2 {
     text-align: center;
-    font-size: 28px;
-    margin: 0 0 28px;
+    font-size: clamp(1.8rem, 2vw, 2.7rem);
+    margin: 0 auto 28px;
     color: #ffffff;
+    max-width: 820px;
+    line-height: 1.2
 }
 
 .faq-grid {
@@ -250,7 +256,14 @@ a {
     min-height: 315px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 12px 25px rgba(0, 0, 0, .16)
+    box-shadow: 0 12px 25px rgba(0, 0, 0, .16);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(190, 158, 68, .7);
+    box-shadow: 0 18px 30px rgba(0, 0, 0, .24)
 }
 
 .card .icon {
@@ -410,8 +423,27 @@ footer a {
     margin: 5px 0
 }
 
+.footer-brand {
+    display: grid;
+    gap: 12px
+}
+
+.footer-brand .brand-mark {
+    display: inline-flex;
+    width: 58px;
+    height: 58px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #be9e44;
+    color: #111111;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: .06em
+}
+
 .footer-brand p {
-    max-width: 260px
+    max-width: 320px
 }
 
 .muted {
@@ -423,7 +455,9 @@ footer a {
     border-top: 1px solid #242424;
     padding-top: 15px;
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap
 }
 
 .chatbot-widget {
