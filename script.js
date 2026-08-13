@@ -37,3 +37,81 @@ document.getElementById('contactForm').addEventListener('submit', e => {
   window.location.href = `mailto:info@celestechsolutions.com?subject=${subject}&body=${body}`;
   document.getElementById('formStatus').textContent = 'Your email client should open shortly so you can send this message to info@celestechsolutions.com.';
 });
+
+const chatbotToggle = document.getElementById('chatbotToggle');
+const chatbotPanel = document.getElementById('ctsChatbot');
+const chatbotClose = document.querySelector('.chatbot-close');
+const chatbotForm = document.getElementById('chatbotForm');
+const chatbotInput = document.getElementById('chatbotInput');
+const chatbotMessages = document.getElementById('chatbotMessages');
+
+const chatbotReplies = {
+  default: 'I can help with CTS services, strategy, architecture, cloud modernization, and next steps. Tell me what you need help with.',
+  services: 'CTS offers strategic technology advisory, infrastructure health checks, data center consulting, cloud infrastructure assessments, technical program management, and solutions architecture design.',
+  cloud: 'Our cloud work covers AWS, Azure, GCP strategy, migration planning, architecture reviews, and modernization recommendations.',
+  data: 'We support data center consulting, capacity planning, cooling and power efficiency reviews, and modernization roadmaps.',
+  contact: 'You can start by using the contact form on this page or email info@celestechsolutions.com to request a consultation.'
+};
+
+function addChatMessage(text, sender = 'bot') {
+  const message = document.createElement('div');
+  message.className = `message ${sender}`;
+  message.textContent = text;
+  chatbotMessages.appendChild(message);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
+
+function getBotReply(inputText) {
+  const text = inputText.toLowerCase();
+
+  if (text.includes('cloud') || text.includes('aws') || text.includes('azure') || text.includes('gcp')) {
+    return chatbotReplies.cloud;
+  }
+
+  if (text.includes('data center') || text.includes('data-center') || text.includes('power') || text.includes('cooling')) {
+    return chatbotReplies.data;
+  }
+
+  if (text.includes('service') || text.includes('offer') || text.includes('what do you do')) {
+    return chatbotReplies.services;
+  }
+
+  if (text.includes('contact') || text.includes('consult') || text.includes('talk') || text.includes('start')) {
+    return chatbotReplies.contact;
+  }
+
+  return chatbotReplies.default;
+}
+
+if (chatbotToggle && chatbotPanel) {
+  chatbotToggle.addEventListener('click', () => {
+    const isHidden = chatbotPanel.hasAttribute('hidden');
+    chatbotPanel.toggleAttribute('hidden', !isHidden);
+    chatbotToggle.setAttribute('aria-expanded', String(isHidden));
+    if (isHidden) {
+      setTimeout(() => chatbotInput.focus(), 100);
+    }
+  });
+
+  if (chatbotClose) {
+    chatbotClose.addEventListener('click', () => {
+      chatbotPanel.setAttribute('hidden', 'hidden');
+      chatbotToggle.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  chatbotForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const userInput = chatbotInput.value.trim();
+
+    if (!userInput) {
+      return;
+    }
+
+    addChatMessage(userInput, 'user');
+    chatbotInput.value = '';
+
+    const reply = getBotReply(userInput);
+    window.setTimeout(() => addChatMessage(reply, 'bot'), 200);
+  });
+}
