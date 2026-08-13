@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Public site: no restrictive crawler rules are applied.
+# This allows LinkedIn and other search crawlers to access the website.
