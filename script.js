@@ -44,13 +44,16 @@ const chatbotClose = document.querySelector('.chatbot-close');
 const chatbotForm = document.getElementById('chatbotForm');
 const chatbotInput = document.getElementById('chatbotInput');
 const chatbotMessages = document.getElementById('chatbotMessages');
+const chatbotChips = document.querySelectorAll('.chatbot-chip');
+const chatbotCta = document.getElementById('chatbotCta');
 
 const chatbotReplies = {
-  default: 'I can help with CTS services, strategy, architecture, cloud modernization, and next steps. Tell me what you need help with.',
-  services: 'CTS offers strategic technology advisory, infrastructure health checks, data center consulting, cloud infrastructure assessments, technical program management, and solutions architecture design.',
-  cloud: 'Our cloud work covers AWS, Azure, GCP strategy, migration planning, architecture reviews, and modernization recommendations.',
-  data: 'We support data center consulting, capacity planning, cooling and power efficiency reviews, and modernization roadmaps.',
-  contact: 'You can start by using the contact form on this page or email info@celestechsolutions.com to request a consultation.'
+  default: 'A strong next step is to identify the business problem behind the technology decision. We can help with cloud efficiency, AI automation, infrastructure modernization, and IT strategy. Tell me what challenge you are trying to solve, and I’ll point you in the right direction.',
+  services: 'CTS helps businesses with strategic technology advisory, infrastructure assessments, cloud modernization, AI automation, and operational improvement planning. If you want the best fit, tell me whether you are focused on cost, speed, automation, or reliability.',
+  cloud: 'Cloud cost and performance issues are often a sign that infrastructure needs better design, usage visibility, or modernization. We help organizations reduce spend, improve resilience, and align cloud decisions to business goals.',
+  data: 'Data center and infrastructure challenges can impact cost, uptime, and growth. We evaluate capacity, efficiency, modernization opportunities, and long-term operational strategy to help teams make smarter infrastructure decisions.',
+  ai: 'AI automation can streamline repetitive work, improve lead follow-up, and help teams move faster. We design practical AI and workflow solutions that support sales, operations, and service delivery without adding unnecessary complexity.',
+  contact: 'The easiest next step is to fill out the contact form or email info@celestechsolutions.com with a short overview of your goals. We can recommend the right engagement based on your current situation.'
 };
 
 function addChatMessage(text, sender = 'bot') {
@@ -64,23 +67,45 @@ function addChatMessage(text, sender = 'bot') {
 function getBotReply(inputText) {
   const text = inputText.toLowerCase();
 
-  if (text.includes('cloud') || text.includes('aws') || text.includes('azure') || text.includes('gcp')) {
-    return chatbotReplies.cloud;
+  if (text.includes('cloud') || text.includes('aws') || text.includes('azure') || text.includes('gcp') || text.includes('cost') || text.includes('spend')) {
+    return 'A cloud cost review is a smart place to start. We can identify waste, improve efficiency, and help you reduce recurring infrastructure spend without slowing growth.';
   }
 
-  if (text.includes('data center') || text.includes('data-center') || text.includes('power') || text.includes('cooling')) {
+  if (text.includes('ai') || text.includes('automation') || text.includes('workflow') || text.includes('agent')) {
+    return chatbotReplies.ai;
+  }
+
+  if (text.includes('data center') || text.includes('data-center') || text.includes('power') || text.includes('cooling') || text.includes('infrastructure')) {
     return chatbotReplies.data;
   }
 
-  if (text.includes('service') || text.includes('offer') || text.includes('what do you do')) {
+  if (text.includes('service') || text.includes('offer') || text.includes('what do you do') || text.includes('solutions')) {
     return chatbotReplies.services;
   }
 
-  if (text.includes('contact') || text.includes('consult') || text.includes('talk') || text.includes('start')) {
+  if (text.includes('contact') || text.includes('consult') || text.includes('talk') || text.includes('start') || text.includes('book')) {
     return chatbotReplies.contact;
   }
 
+  if (text.includes('strategy') || text.includes('it') || text.includes('roadmap')) {
+    return 'Technology strategy is where smart growth starts. We help teams prioritize the right initiatives, reduce operational friction, and build a roadmap that supports both short-term wins and long-term scale.';
+  }
+
   return chatbotReplies.default;
+}
+
+function triggerChatReply(messageText) {
+  addChatMessage(messageText, 'user');
+  const reply = getBotReply(messageText);
+  if (chatbotCta) {
+    chatbotCta.hidden = false;
+  }
+  window.setTimeout(() => {
+    addChatMessage(reply, 'bot');
+    if (chatbotCta) {
+      chatbotCta.hidden = false;
+    }
+  }, 220);
 }
 
 if (chatbotToggle && chatbotPanel) {
@@ -89,6 +114,9 @@ if (chatbotToggle && chatbotPanel) {
     chatbotPanel.toggleAttribute('hidden', !isHidden);
     chatbotToggle.setAttribute('aria-expanded', String(isHidden));
     if (isHidden) {
+      if (chatbotCta) {
+        chatbotCta.hidden = false;
+      }
       setTimeout(() => chatbotInput.focus(), 100);
     }
   });
@@ -97,8 +125,20 @@ if (chatbotToggle && chatbotPanel) {
     chatbotClose.addEventListener('click', () => {
       chatbotPanel.setAttribute('hidden', 'hidden');
       chatbotToggle.setAttribute('aria-expanded', 'false');
+      if (chatbotCta) {
+        chatbotCta.hidden = true;
+      }
     });
   }
+
+  chatbotChips.forEach(button => {
+    button.addEventListener('click', () => {
+      const selectedPrompt = button.dataset.chat || button.textContent.trim();
+      chatbotInput.value = selectedPrompt;
+      triggerChatReply(selectedPrompt);
+      chatbotInput.value = '';
+    });
+  });
 
   chatbotForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -108,10 +148,7 @@ if (chatbotToggle && chatbotPanel) {
       return;
     }
 
-    addChatMessage(userInput, 'user');
+    triggerChatReply(userInput);
     chatbotInput.value = '';
-
-    const reply = getBotReply(userInput);
-    window.setTimeout(() => addChatMessage(reply, 'bot'), 200);
   });
 }
