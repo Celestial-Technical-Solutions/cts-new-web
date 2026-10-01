@@ -2,6 +2,31 @@ const toggle = document.querySelector('.menu-toggle'); const nav = document.quer
 toggle.addEventListener('click', () => { nav.classList.toggle('open'); toggle.setAttribute('aria-expanded', nav.classList.contains('open')) });
 document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
 
+// ===== GOOGLE ANALYTICS 4 EVENT TRACKING =====
+// TODO: Replace 'G-XXXXXXXXXX' with your actual GA4 property ID
+function trackEvent(eventName, eventData = {}) {
+  if (window.gtag) {
+    gtag('event', eventName, eventData);
+  }
+}
+
+// Track page views
+trackEvent('page_view', {
+  'page_path': window.location.pathname
+});
+
+// ===== BOOKING SYSTEM INITIALIZATION =====
+// TODO: Replace with real booking link (Calendly, Acuity, HubSpot, etc.)
+const BOOKING_LINK = "https://calendly.com/celestechsolutions/consultation"; // Placeholder
+
+document.querySelectorAll('a.booking-link').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    trackEvent('booking_link_click', { 'cta_text': link.textContent });
+    window.open(BOOKING_LINK, '_blank');
+  });
+});
+
 // Replace each placeholder below with the real Stripe Payment Link for that CTS service.
 const stripeLinks = {
   "Strategic Technology Advisory": "",
@@ -32,6 +57,13 @@ if (mainContactForm) {
     const company = form.get('company') || 'No company provided';
     const service = form.get('service') || 'No service selected';
     const message = form.get('message') || 'No message provided';
+
+    // Track form submission
+    trackEvent('contact_form_submit', {
+      'service': service,
+      'company': company
+    });
+
     const subject = encodeURIComponent('CTS Contact Form Submission');
     const body = encodeURIComponent(
       `Name: ${name}\nEmail: ${email}\nCompany: ${company}\nService: ${service}\n\nMessage:\n${message}`
@@ -245,3 +277,27 @@ if (chatbotToggle && chatbotPanel) {
     chatbotInput.value = '';
   });
 }
+
+// ===== ASSESSMENT FORM TRACKING =====
+const assessmentForm = document.getElementById('assessmentForm');
+if (assessmentForm) {
+  assessmentForm.addEventListener('submit', e => {
+    const companySize = document.querySelector('select[name="companySize"]')?.value || 'unknown';
+    const primaryChallenge = document.querySelector('select[name="primaryChallenge"]')?.value || 'unknown';
+
+    trackEvent('assessment_requested', {
+      'company_size': companySize,
+      'primary_challenge': primaryChallenge
+    });
+  });
+}
+
+// ===== ENTRY POINT TRACKING =====
+document.querySelectorAll('.entry-grid a, .entry-card a').forEach(link => {
+  link.addEventListener('click', () => {
+    trackEvent('entry_point_click', {
+      'entry_path': link.href,
+      'entry_text': link.textContent
+    });
+  });
+});

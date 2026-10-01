@@ -2,6 +2,15 @@
   publish = "."
   command = ""
 
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/netlify/functions/*"
+  to = "/index.html"
+  status = 404
+  force = true
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -12,6 +21,12 @@
     X-XSS-Protection = "1; mode=block"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+[[redirects]]
+  from = "/api/celeste"
+  to = "/.netlify/functions/celeste"
+  status = 200
+  force = true
 
 # Optional redirect for single-page app behavior if you add client-side routing later.
 [[redirects]]

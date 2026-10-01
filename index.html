@@ -51,6 +51,7 @@
   <link rel="canonical" href="https://celestechsolutions.com/">
   <title>Celestial Technical Solutions | Cloud, AI & IT Consulting</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/celeste.css">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -119,17 +120,48 @@
           infrastructure, deploy AI SuperAgents, and improve operational performance across AWS, Microsoft Azure,
           Google Cloud, and enterprise technology environments.</p>
         <div class="actions">
-          <a class="btn btn-gold" href="#contact">Schedule a Consultation</a>
-          <a class="btn btn-outline" href="#services">Explore Services</a>
+          <a class="btn btn-gold" href="ai-automation-assessment/">Get Your Free AI Assessment</a>
+          <a class="btn btn-outline" href="#entry-points">Find Your Path</a>
         </div>
       </div>
 
+    </section>
+
+    <section id="entry-points" class="entry-points section">
+      <h2>How Do You Want to Improve?</h2>
+      <p class="section-subtitle">Choose your starting point. We'll identify opportunities in your specific area.</p>
+      <div class="entry-grid">
+        <article class="entry-card">
+          <div class="entry-icon">💰</div>
+          <h3>Reduce Cloud Costs</h3>
+          <p>Optimize AWS, Azure, or GCP spend without sacrificing performance or reliability.</p>
+          <a class="btn btn-outline" href="cloud-cost-optimization/">Review Your Costs</a>
+        </article>
+        <article class="entry-card">
+          <div class="entry-icon">⚡</div>
+          <h3>Increase Revenue & Productivity</h3>
+          <p>Deploy AI agents and automation to accelerate sales, support, and operations.</p>
+          <a class="btn btn-outline" href="ai-automation-assessment/">Request Assessment</a>
+        </article>
+        <article class="entry-card">
+          <div class="entry-icon">🎯</div>
+          <h3>Modernize Infrastructure</h3>
+          <p>Evaluate technology strategy, improve resilience, and plan digital transformation.</p>
+          <a class="btn btn-outline" href="cloud-infrastructure-consulting/">Plan Your Path</a>
+        </article>
+      </div>
     </section>
 
     <section id="services" class="section">
       <p class="eyebrow center">CLOUD • AI • TECHNOLOGY CONSULTING</p>
       <h2>Strategic Solutions for Cloud Efficiency, AI Operations, and Business Growth</h2>
       <div class="service-grid flagship-grid">
+        <article class="card flagship-card assessment-card">
+          <div class="icon">✨</div>
+          <h3>Free AI & Automation Assessment</h3>
+          <p>Discover automation opportunities, cost savings, and AI agent applications specific to your business.</p>
+          <a class="btn btn-gold" href="ai-automation-assessment/">Request Assessment</a>
+        </article>
         <article class="card flagship-card">
           <div class="icon">◉</div>
           <h3>Cloud Cost Optimization</h3>
@@ -316,79 +348,18 @@
     </div>
   </footer>
 
-  <div class="chatbot-widget" aria-live="polite">
-    <button class="chatbot-toggle" id="chatbotToggle" type="button" aria-expanded="false" aria-controls="ctsChatbot"
-      aria-label="Open CTS Chat Agent">
-      <span class="chatbot-toggle-icon">✦</span>
-      <span>Book a Call</span>
-    </button>
-
-    <div class="chatbot-panel" id="ctsChatbot" hidden>
-      <div class="chatbot-header">
-        <div class="chatbot-title-wrap">
-          <span class="chatbot-badge">C</span>
-          <strong>CTS Chat Agent</strong>
-        </div>
-        <button class="chatbot-close" type="button" aria-label="Close CTS Chat Agent">×</button>
-      </div>
-
-      <div class="chatbot-messages" id="chatbotMessages">
-        <div class="message bot">Hi! I can help you reduce cloud waste, improve operations, and identify the right
-          technology plan for your business. Share your biggest challenge and I’ll guide you to the best next step.
-        </div>
-      </div>
-
-      <div class="chatbot-suggestions" aria-label="Quick questions">
-        <button type="button" class="chatbot-chip" data-chat="cloud cost review">Cloud cost review</button>
-        <button type="button" class="chatbot-chip" data-chat="AI automation">AI automation</button>
-        <button type="button" class="chatbot-chip" data-chat="IT strategy">IT strategy</button>
-      </div>
-
-      <div class="chatbot-cta" id="chatbotCta" hidden>
-        <p>Need a tailored recommendation?</p>
-        <div class="chatbot-cta-actions">
-          <button type="button" class="btn btn-gold chatbot-book-button">Book a 15-min call</button>
-          <a href="mailto:info@celestechsolutions.com?subject=CTS%20Consultation%20Request"
-            class="btn btn-outline">Email CTS</a>
-        </div>
-
-        <form class="chatbot-lead-form" id="chatbotLeadForm" hidden>
-          <label>
-            <span>What kind of help do you need?</span>
-            <select name="chatbotGoal" required>
-              <option value="">Select an option</option>
-              <option value="Cloud cost review">Cloud cost review</option>
-              <option value="AI automation">AI automation</option>
-              <option value="IT strategy">IT strategy</option>
-              <option value="Infrastructure modernization">Infrastructure modernization</option>
-              <option value="General consultation">General consultation</option>
-            </select>
-          </label>
-          <label>
-            <span>Name</span>
-            <input type="text" name="chatbotName" autocomplete="name" required>
-          </label>
-          <label>
-            <span>Email</span>
-            <input type="email" name="chatbotEmail" autocomplete="email" required>
-          </label>
-          <label>
-            <span>Company</span>
-            <input type="text" name="chatbotCompany" autocomplete="organization" required>
-          </label>
-          <button type="submit" class="btn btn-gold">Send my details</button>
-        </form>
-      </div>
-
-      <form class="chatbot-form" id="chatbotForm">
-        <input id="chatbotInput" type="text" name="chatbotInput" autocomplete="off"
-          placeholder="Ask about your goals..." aria-label="Ask about your technology goals">
-        <button type="submit" class="btn btn-gold">Ask</button>
-      </form>
-    </div>
-  </div>
+  <form name="celeste-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="hidden" name="form-name" value="celeste-lead">
+    <p hidden><label>Leave this field empty: <input name="bot-field"></label></p>
+    <input name="fullName"><input name="company"><input name="businessEmail"><input name="phone">
+    <input name="primaryProblem"><input name="urgency"><input name="cloudProvider">
+    <input name="approximateCloudSpend"><input name="desiredOutcome"><input name="serviceInterest">
+    <input name="conversationSummary"><input name="assignedSpecialist"><input name="qualificationStatus">
+    <input name="followUpConsent">
+  </form>
 
   <script src="script.js"></script>
+  <script type="module" src="/celeste.js"></script>
 </body>
 
 </html>
