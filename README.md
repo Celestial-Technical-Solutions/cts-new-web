@@ -2,19 +2,18 @@
 
 ## Celeste AI sales assistant
 
-Celeste is a shared, accessible chat widget served on every page. Browser code calls the same-origin `/api/celeste` route; the Netlify Function validates requests and calls an OpenAI-compatible chat completions API. No provider key is sent to the browser. Conversation state stays in page memory. If a visitor asks CTS to follow up, their contact details and a summary are submitted—with explicit consent—to the existing Netlify Forms service as `celeste-lead`.
+Celeste is a shared, accessible chat widget served on every page. Browser code calls the same-origin `/api/celeste` route; the Netlify Function validates requests and calls the xAI chat completions API. No provider key is sent to the browser. Conversation state stays in page memory. If a visitor asks CTS to follow up, their contact details and a summary are submitted—with explicit consent—to the existing Netlify Forms service as `celeste-lead`.
 
 ### Configure the AI provider secret
 
 In Netlify, open **Site configuration → Environment variables** (or **Project configuration → Environment variables**) and add:
 
-- Preferred provider: OpenAI's API for ChatGPT models. A ChatGPT web subscription is separate from API access and does not provide an API key or API usage credits.
-- `CELESTE_AI_API_KEY` — preferred OpenAI API key; mark it secret/sensitive.
-- `XAI_API_KEY` — optional xAI API key. If `CELESTE_AI_API_KEY` is unset and this key is present, Celeste defaults to xAI's `https://api.x.ai/v1` endpoint.
-- `CELESTE_AI_MODEL` — model identifier enabled for that key.
-- `CELESTE_AI_BASE_URL` — optional HTTPS OpenAI-compatible API base URL. Defaults to `https://api.openai.com/v1` for OpenAI, or `https://api.x.ai/v1` when using only `XAI_API_KEY`.
+- Provider: xAI Grok. The browser sends messages to the Netlify function; the xAI key is used only by the server-side provider adapter.
+- `XAI_API_KEY` — required secret/sensitive Netlify Function environment variable.
+- `CELESTE_AI_MODEL` — optional xAI model override; defaults to `grok-3`. Set it to a model available to your xAI account if that model is unavailable.
+- The xAI endpoint is fixed server-side at `https://api.x.ai/v1`; OpenAI key variables and a base URL override are not used.
 
-Set these for the Functions runtime and redeploy after changing them. Never put credentials in HTML, JavaScript, committed files, or client-exposed build variables. For local `netlify dev`, use environment variables in your shell or a root `.env` file that is excluded from version control; do not publish or commit it.
+Add these under Netlify **Project configuration → Environment variables**, ensure `XAI_API_KEY` is scoped to Functions/runtime, and redeploy after changes. Never put the key in HTML, browser JavaScript, a client bundle, or committed files.
 
 The in-memory per-IP limit is best-effort and may reset across serverless instances. For stronger production abuse protection, add a shared rate-limit service or edge/WAF rule. Review the configured AI provider's data handling and retention terms before using it with prospect information.
 

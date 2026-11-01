@@ -85,8 +85,18 @@ export default async (request, context) => {
         ]);
         return jsonResponse(200, { reply });
     } catch (error) {
-        console.error('Celeste request failed:', error instanceof Error ? error.message : 'Unknown provider error');
-        const notConfigured = !(process.env.CELESTE_AI_API_KEY || process.env.XAI_API_KEY) || !process.env.CELESTE_AI_MODEL;
+        const notConfigured = !process.env.XAI_API_KEY;
+        const diagnosticId = globalThis.crypto?.randomUUID?.() || `celeste-${Date.now()}`;
+        console.error('Celeste AI request failed', {
+            diagnosticId,
+            category: notConfigured ? 'configuration' : 'provider',
+            providerStatus: Number.isInteger(error?.status) ? error.status : undefined,
+            providerCode: error?.code,
+            providerType: error?.type,
+            providerRequestId: error?.providerRequestId,
+            errorName: error instanceof Error ? error.name : 'UnknownError',
+            errorMessage: error instanceof Error ? error.message.slice(0, 300) : 'Unknown provider error'
+        });
         return jsonResponse(notConfigured ? 503 : 502, {
             error: notConfigured
                 ? 'Celeste is being configured. Please contact info@celestechsolutions.com.'

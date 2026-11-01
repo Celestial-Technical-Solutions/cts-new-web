@@ -1,26 +1,24 @@
-const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
 const XAI_BASE_URL = 'https://api.x.ai/v1';
+const DEFAULT_XAI_MODEL = 'grok-3';
+
+function safeProviderText(value) {
+    if (typeof value !== 'string') return undefined;
+    return value
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/Bearer\s+[^\s,;]+/gi, 'Bearer [REDACTED]')
+        .replace(/\b(?:sk|xai)-[A-Za-z0-9_-]{8,}\b/gi, '[REDACTED]')
+        .slice(0, 300);
+}
 
 export async function createAssistantCompletion(messages) {
-    const useXaiKey = !process.env.CELESTE_AI_API_KEY && Boolean(process.env.XAI_API_KEY);
-    const apiKey = process.env.CELESTE_AI_API_KEY || process.env.XAI_API_KEY;
-    const defaultBaseUrl = useXaiKey ? XAI_BASE_URL : DEFAULT_BASE_URL;
-    const baseUrl = (process.env.CELESTE_AI_BASE_URL || defaultBaseUrl).replace(/\/+$/, '');
-    const model = process.env.CELESTE_AI_MODEL;
+    const apiKey = process.env.XAI_API_KEY;
+    const model = process.env.CELESTE_AI_MODEL || DEFAULT_XAI_MODEL;
 
-    if (!apiKey || !model) {
-        throw new Error('AI provider configuration is incomplete.');
+    if (!apiKey) {
+        throw new Error('Missing XAI_API_KEY environment variable.');
     }
 
-    let endpoint;
-    try {
-        endpoint = new URL(`${baseUrl}/chat/completions`);
-    } catch {
-        throw new Error('AI provider configuration is invalid.');
-    }
-    if (endpoint.protocol !== 'https:') {
-        throw new Error('AI provider must use HTTPS.');
-    }
+    const endpoint = new URL(`${XAI_BASE_URL}/chat/completions`);
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
@@ -40,7 +38,20 @@ export async function createAssistantCompletion(messages) {
             signal: controller.signal
         });
 
-        if (!response.ok) throw new Error(`AI provider returned ${response.status}.`);
+        if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({}));
+            const providerError = errorBody?.error;
+            const providerMessage = typeof providerError === 'string' ? providerError : providerError?.message;
+            const error = new Error(
+                safeProviderText(providerMessage) || `AI provider returned HTTP ${response.status}.`
+            );
+            error.name = 'AIProviderError';
+            error.status = response.status;
+            error.code = safeProviderText(providerError?.code);
+            error.type = safeProviderText(providerError?.type);
+            error.providerRequestId = safeProviderText(response.headers.get('x-request-id'));
+            throw error;
+        }
         const data = await response.json();
         const reply = data?.choices?.[0]?.message?.content;
         if (typeof reply !== 'string' || !reply.trim()) {
