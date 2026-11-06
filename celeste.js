@@ -1,316 +1,225 @@
-import { createLeadSessionId, requestCelesteReply } from './celesteService.js';
+import { requestCelesteReply } from './celesteService.js';
 
-const OPENING_MESSAGE = "Hi, I’m Celeste — the AI SuperAgent for Celestial Technical Solutions. I help businesses reduce cloud spend, deploy practical AI automation, and modernize their technology environments.\n\nWhat are you looking to improve today — cloud costs, AI SuperAgents, infrastructure, or something else?";
-const QUICK_ACTIONS = [
-    'Reduce Cloud Costs',
-    'Build My AI Workforce',
-    'Improve IT / Infrastructure',
-    'Talk to CTS'
+if (window.self === window.top && !document.querySelector('link[rel="stylesheet"][href="/celeste.css"]')) {
+    const stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = '/celeste.css';
+    document.head.append(stylesheet);
+}
+
+const STORAGE_KEY = 'cts-celeste-chat-v1';
+const GREETING = "Hi, I'm Celeste from Celestial Technical Solutions. I can help you scope an infrastructure assessment or cloud cost review. What are you trying to solve?";
+const QUICK_REPLIES = [
+    'Infrastructure Quick Scan ($1,500)',
+    'Cloud Cost Optimization',
+    'Talk to a human'
 ];
-const HISTORY_LIMIT = 12;
 
-function createElement(tag, className, text) {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    if (text) element.textContent = text;
-    return element;
+function element(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+}
+
+function readSession() {
+    try {
+        const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null');
+        if (!saved || !Array.isArray(saved.messages)) return { conversationId: null, messages: [] };
+        return {
+            conversationId: typeof saved.conversationId === 'string' ? saved.conversationId : null,
+            messages: saved.messages.filter(message =>
+                message && ['assistant', 'user'].includes(message.role) && typeof message.content === 'string'
+            ).slice(-100)
+        };
+    } catch {
+        return { conversationId: null, messages: [] };
+    }
 }
 
 function installCeleste() {
     if (document.querySelector('.celeste-widget')) return;
 
-    const widget = createElement('div', 'celeste-widget');
-    const launcher = createElement('button', 'celeste-launcher');
+    const widget = element('div', 'celeste-widget');
+    const launcher = element('button', 'celeste-launcher');
     launcher.type = 'button';
     launcher.setAttribute('aria-expanded', 'false');
     launcher.setAttribute('aria-controls', 'celeste-dialog');
-    launcher.setAttribute('aria-label', 'Ask Celeste, AI Sales Consultant');
-    const launcherMark = createElement('span', 'celeste-launcher-mark', '✦');
+    launcher.setAttribute('aria-label', 'Open Celeste sales chat');
+    const launcherMark = element('span', 'celeste-launcher-mark', '✦');
     launcherMark.setAttribute('aria-hidden', 'true');
-    const launcherCopy = createElement('span', 'celeste-launcher-copy');
-    launcherCopy.append(createElement('strong', '', 'Ask Celeste'));
-    const launcherSubtitle = createElement('span');
-    const statusDot = createElement('i');
-    statusDot.setAttribute('aria-hidden', 'true');
-    launcherSubtitle.append(statusDot, document.createTextNode('AI Sales Consultant'));
-    launcherCopy.append(launcherSubtitle);
-    launcher.append(launcherMark, launcherCopy);
+    launcher.append(launcherMark, element('span', '', 'Chat with Celeste'));
 
-    const panel = createElement('section', 'celeste-panel');
+    const panel = element('section', 'celeste-panel');
     panel.id = 'celeste-dialog';
     panel.hidden = true;
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-modal', 'true');
     panel.setAttribute('aria-labelledby', 'celeste-title');
 
-    const header = createElement('header', 'celeste-header');
-    const identity = createElement('div', 'celeste-identity');
-    const avatar = createElement('span', 'celeste-avatar', 'C');
-    avatar.setAttribute('aria-hidden', 'true');
-    const titles = createElement('div', 'celeste-titles');
-    const heading = createElement('strong', '', 'CELESTE');
+    const header = element('header', 'celeste-header');
+    const titleWrap = element('div', 'celeste-title-wrap');
+    const heading = element('h2', '', 'Celeste — Sales');
     heading.id = 'celeste-title';
-    titles.append(heading, createElement('span', '', 'AI Sales & Client Success Director'), createElement('small', '', 'Celestial Technical Solutions'));
-    identity.append(avatar, titles);
-
-    const headerActions = createElement('div', 'celeste-header-actions');
-    const clearButton = createElement('button', 'celeste-clear', 'Clear');
-    clearButton.type = 'button';
-    clearButton.setAttribute('aria-label', 'Clear conversation');
-    const closeButton = createElement('button', 'celeste-close', '×');
+    const online = element('span', 'celeste-online');
+    online.setAttribute('aria-label', 'Online');
+    titleWrap.append(heading, online);
+    const headerActions = element('div', 'celeste-header-actions');
+    const resetButton = element('button', 'celeste-reset', 'New chat');
+    resetButton.type = 'button';
+    resetButton.setAttribute('aria-label', 'Start a new chat');
+    const closeButton = element('button', 'celeste-close', '×');
     closeButton.type = 'button';
     closeButton.setAttribute('aria-label', 'Close Celeste chat');
-    headerActions.append(clearButton, closeButton);
-    header.append(identity, headerActions);
+    headerActions.append(resetButton, closeButton);
+    header.append(titleWrap, headerActions);
 
-    const body = createElement('div', 'celeste-body');
-    body.id = 'celeste-messages';
-    body.setAttribute('role', 'log');
-    body.setAttribute('aria-live', 'polite');
-    body.setAttribute('aria-relevant', 'additions text');
+    const transcript = element('div', 'celeste-transcript');
+    transcript.setAttribute('role', 'log');
+    transcript.setAttribute('aria-live', 'polite');
+    transcript.setAttribute('aria-relevant', 'additions text');
+    transcript.setAttribute('aria-label', 'Conversation with Celeste');
 
-    const followupButton = createElement('button', 'celeste-followup', 'Request a CTS follow-up');
-    followupButton.type = 'button';
-    followupButton.hidden = true;
-
-    const quickActions = createElement('div', 'celeste-quick-actions');
-    quickActions.setAttribute('aria-label', 'Quick topics');
-    QUICK_ACTIONS.forEach(label => {
-        const action = createElement('button', 'celeste-chip', label);
-        action.type = 'button';
-        quickActions.append(action);
+    const quickReplies = element('div', 'celeste-quick-replies');
+    quickReplies.setAttribute('aria-label', 'Suggested messages');
+    QUICK_REPLIES.forEach(text => {
+        const chip = element('button', 'celeste-chip', text);
+        chip.type = 'button';
+        quickReplies.append(chip);
     });
 
-    const privacyNote = createElement('p', 'celeste-privacy', 'Please don’t share passwords, API keys, authentication codes, payment card numbers, Social Security numbers, or other confidential credentials.');
-
-    const form = createElement('form', 'celeste-form');
-    const input = createElement('textarea', 'celeste-input');
+    const footer = element('footer', 'celeste-footer');
+    const humanLink = element('a', 'celeste-human', 'Talk to a human');
+    humanLink.href = 'mailto:cparham@celestechsolutions.com';
+    const disclaimer = element('p', 'celeste-disclaimer', 'Celeste is an AI assistant. Conversations may be used to improve service.');
+    const form = element('form', 'celeste-form');
+    const input = element('textarea', 'celeste-input');
     input.name = 'message';
     input.rows = 1;
     input.maxLength = 2000;
-    input.placeholder = 'Tell Celeste what you’re working on…';
+    input.placeholder = 'Write a message…';
     input.setAttribute('aria-label', 'Message Celeste');
-    const sendButton = createElement('button', 'celeste-send', 'Send');
+    const sendButton = element('button', 'celeste-send', 'Send');
     sendButton.type = 'submit';
     form.append(input, sendButton);
-
-    const footer = createElement('footer', 'celeste-footer');
-    footer.append(privacyNote, form);
-    panel.append(header, body, followupButton, quickActions, footer);
+    footer.append(humanLink, disclaimer, form);
+    panel.append(header, transcript, quickReplies, footer);
     widget.append(panel, launcher);
     document.body.append(widget);
 
-    let history = [];
-    let sessionId = createLeadSessionId();
+    const session = readSession();
+    let conversationId = session.conversationId;
+    let messages = session.messages;
     let pending = false;
-    let leadForm = null;
-    let lastFocused = null;
 
-    function scrollToLatest() {
-        body.scrollTop = body.scrollHeight;
+    function scrollLatest() {
+        transcript.scrollTop = transcript.scrollHeight;
     }
 
-    function appendMessage(text, role) {
-        const message = createElement('div', `celeste-message celeste-message-${role}`);
-        message.textContent = text;
-        message.setAttribute('dir', 'auto');
-        body.append(message);
-        scrollToLatest();
-        return message;
-    }
-
-    function resetConversation() {
-        if (pending) return;
-        history = [];
-        sessionId = createLeadSessionId();
-        body.replaceChildren();
-        leadForm = null;
-        followupButton.hidden = true;
-        appendMessage(OPENING_MESSAGE, 'assistant');
-        quickActions.hidden = false;
-        input.value = '';
-        input.style.height = '';
-    }
-
-    function inferLeadContext() {
-        const text = history.filter(item => item.role === 'user').map(item => item.content).join(' ').toLowerCase();
-        const specialist = text.includes('compliance') || text.includes('ethic') || text.includes('risk') ? 'Sophia'
-            : text.includes('machine learning') || text.includes('model training') ? 'Atlas'
-                : text.includes('analytics') || text.includes('data analysis') || text.includes('cloud cost') || text.includes('finops') ? 'Nova'
-                    : text.includes('workflow') || text.includes('operations') || text.includes('automation') ? 'Marley'
-                        : text.includes('strategy') || text.includes('solution architecture') ? 'Titan'
-                            : text.includes('cloud') || text.includes('infrastructure') || text.includes('modernization') ? 'Echo' : '';
-        const service = text.includes('cloud') || text.includes('aws') || text.includes('azure') || text.includes('gcp') || text.includes('finops') ? 'Cloud cost optimization / FinOps'
-            : text.includes('automat') || text.includes('workflow') || text.includes('crm') || text.includes('agent') ? 'AI automation / AI workforce'
-                : text.includes('infrastructure') || text.includes('migration') || text.includes('moderniz') ? 'Infrastructure / modernization' : 'CTS consultation';
-        const summary = history.filter(item => item.role === 'user').map(item => item.content)
-            .join(' ')
-            .replace(/(?:password|api[_ -]?key|secret|token|authorization)\s*[:=]\s*\S+/gi, '[redacted]')
-            .replace(/\b(?:sk-[A-Za-z0-9_-]{12,}|AKIA[A-Z0-9]{16})\b/g, '[redacted]')
-            .slice(0, 800);
-        return { specialist, service, summary };
-    }
-
-    function appendLeadField(formElement, labelText, name, options = {}) {
-        const label = createElement('label', 'celeste-lead-field');
-        label.append(createElement('span', '', labelText));
-        let control;
-        if (options.choices) {
-            control = createElement('select');
-            control.name = name;
-            options.choices.forEach(([value, labelText]) => {
-                const option = createElement('option', '', labelText);
-                option.value = value;
-                control.append(option);
-            });
-        } else if (options.multiline) {
-            control = createElement('textarea');
-            control.rows = 2;
-            control.name = name;
-            control.maxLength = 500;
-        } else {
-            control = createElement('input');
-            control.type = options.type || 'text';
-            control.name = name;
-            control.maxLength = 200;
-            if (options.autocomplete) control.autocomplete = options.autocomplete;
+    function persist() {
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ conversationId, messages: messages.slice(-100) }));
+        } catch {
+            // The chat remains usable when browser storage is unavailable.
         }
-        control.required = Boolean(options.required);
-        if (options.placeholder) control.placeholder = options.placeholder;
-        label.append(control);
-        formElement.append(label);
-        return control;
     }
 
-    function showLeadForm() {
-        if (leadForm) {
-            leadForm.querySelector('input[name="fullName"]')?.focus();
+    function renderMessage(content, role) {
+        const bubble = element('div', `celeste-message celeste-message-${role}`, content);
+        bubble.setAttribute('dir', 'auto');
+        transcript.append(bubble);
+        scrollLatest();
+        return bubble;
+    }
+
+    function renderOfflineMessage() {
+        const bubble = element('div', 'celeste-message celeste-message-error');
+        bubble.setAttribute('role', 'status');
+        bubble.append(document.createTextNode('Celeste is offline right now — email '));
+        const email = element('a', '', 'cparham@celestechsolutions.com');
+        email.href = 'mailto:cparham@celestechsolutions.com';
+        bubble.append(email, document.createTextNode(" and we'll respond today."));
+        transcript.append(bubble);
+        scrollLatest();
+    }
+
+    function renderHistory() {
+        transcript.replaceChildren();
+        if (!messages.length) {
+            renderMessage(GREETING, 'assistant');
             return;
         }
-        const context = inferLeadContext();
-        leadForm = createElement('form', 'celeste-lead-form');
-        leadForm.append(createElement('h3', '', 'Request a CTS follow-up'));
-        leadForm.append(createElement('p', 'celeste-lead-intro', 'Share the best way for the CTS team to follow up. Your chat summary is included only when you submit this form.'));
-        appendLeadField(leadForm, 'Full name', 'fullName', { required: true, autocomplete: 'name' });
-        appendLeadField(leadForm, 'Company', 'company', { required: true, autocomplete: 'organization' });
-        appendLeadField(leadForm, 'Business email', 'businessEmail', { required: true, type: 'email', autocomplete: 'email' });
-        appendLeadField(leadForm, 'Phone (optional)', 'phone', { type: 'tel', autocomplete: 'tel' });
-        appendLeadField(leadForm, 'Primary problem', 'primaryProblem', { required: true, multiline: true, placeholder: 'What would you like CTS to help solve?' });
-        appendLeadField(leadForm, 'Urgency', 'urgency', { required: true, choices: [['', 'Select timing'], ['Exploring', 'Exploring'], ['Within 1–3 months', 'Within 1–3 months'], ['Within 30 days', 'Within 30 days'], ['Urgent', 'Urgent']] });
-        appendLeadField(leadForm, 'Cloud provider (if relevant)', 'cloudProvider', { choices: [['', 'Not applicable / select'], ['AWS', 'AWS'], ['Azure', 'Azure'], ['Google Cloud', 'Google Cloud'], ['Hybrid', 'Hybrid'], ['Other', 'Other']] });
-        appendLeadField(leadForm, 'Approximate monthly cloud spend (optional)', 'approximateCloudSpend', { placeholder: 'Optional' });
-        appendLeadField(leadForm, 'Desired outcome (optional)', 'desiredOutcome', { placeholder: 'What would a good result look like?' });
+        messages.forEach(message => renderMessage(message.content, message.role));
+    }
 
-        const details = {
-            serviceInterest: context.service,
-            conversationSummary: context.summary,
-            assignedSpecialist: context.specialist,
-            qualificationStatus: 'consultation_requested'
-        };
-        Object.entries(details).forEach(([name, value]) => {
-            const field = createElement('input');
-            field.type = 'hidden';
-            field.name = name;
-            field.value = value;
-            leadForm.append(field);
-        });
-
-        const consentLabel = createElement('label', 'celeste-consent');
-        const consent = createElement('input');
-        consent.type = 'checkbox';
-        consent.name = 'followUpConsent';
-        consent.required = true;
-        consentLabel.append(consent, document.createTextNode('I agree to send these details and my chat summary to CTS for follow-up.'));
-        leadForm.append(consentLabel);
-
-        const actions = createElement('div', 'celeste-lead-actions');
-        const submit = createElement('button', 'celeste-send', 'Send to CTS');
-        submit.type = 'submit';
-        const cancel = createElement('button', 'celeste-cancel', 'Cancel');
-        cancel.type = 'button';
-        actions.append(submit, cancel);
-        leadForm.append(actions);
-        const status = createElement('p', 'celeste-form-status');
-        status.setAttribute('role', 'status');
-        leadForm.append(status);
-        body.append(leadForm);
-        scrollToLatest();
-        leadForm.querySelector('input[name="fullName"]')?.focus();
-
-        cancel.addEventListener('click', () => {
-            leadForm.remove();
-            leadForm = null;
-            followupButton.focus();
-        });
-        leadForm.addEventListener('submit', async event => {
-            event.preventDefault();
-            submit.disabled = true;
-            status.textContent = 'Sending your request…';
-            const formData = new FormData(leadForm);
-            formData.set('form-name', 'celeste-lead');
-            formData.set('bot-field', '');
-            try {
-                const response = await fetch('/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams(formData).toString()
-                });
-                if (!response.ok) throw new Error('Submission failed');
-                leadForm.replaceChildren(createElement('p', 'celeste-lead-success', 'Thank you. Your request has been sent to CTS for follow-up.'));
-            } catch {
-                status.textContent = 'We could not send your request. Please email info@celestechsolutions.com instead.';
-                submit.disabled = false;
-            }
-        });
+    function resetChat() {
+        if (pending) return;
+        conversationId = null;
+        messages = [];
+        try {
+            sessionStorage.removeItem(STORAGE_KEY);
+        } catch {
+            // Resetting the visible chat still works without browser storage.
+        }
+        input.value = '';
+        input.style.height = '';
+        quickReplies.hidden = false;
+        renderHistory();
+        input.focus();
     }
 
     function openChat() {
-        lastFocused = document.activeElement;
         panel.hidden = false;
+        widget.classList.add('is-open');
         launcher.setAttribute('aria-expanded', 'true');
         input.focus();
-        scrollToLatest();
+        scrollLatest();
     }
 
     function closeChat() {
         panel.hidden = true;
+        widget.classList.remove('is-open');
         launcher.setAttribute('aria-expanded', 'false');
         launcher.focus();
-        if (lastFocused && lastFocused !== launcher && lastFocused.isConnected) lastFocused.focus();
     }
 
-    async function sendMessage(text) {
-        const message = text.trim();
+    async function sendMessage(rawMessage) {
+        const message = rawMessage.trim();
         if (!message || pending) return;
 
-        quickActions.hidden = true;
-        appendMessage(message, 'user');
-        history.push({ role: 'user', content: message });
+        quickReplies.hidden = true;
+        messages.push({ role: 'user', content: message });
+        renderMessage(message, 'user');
+        persist();
         input.value = '';
         input.style.height = '';
         pending = true;
         sendButton.disabled = true;
         input.disabled = true;
-        const typing = createElement('div', 'celeste-message celeste-message-assistant celeste-typing', 'Celeste is thinking…');
+        const typing = element('div', 'celeste-message celeste-message-assistant celeste-typing', 'Celeste is typing…');
         typing.setAttribute('role', 'status');
-        body.append(typing);
-        scrollToLatest();
+        transcript.append(typing);
+        scrollLatest();
 
         try {
-            const reply = await requestCelesteReply({
+            const result = await requestCelesteReply({
                 message,
-                history: history.slice(0, -1).slice(-HISTORY_LIMIT),
-                sessionId
+                conversationId,
+                pagePath: window.location.pathname,
+                pageTitle: document.title
             });
+            conversationId = result.conversationId;
+            messages.push({ role: 'assistant', content: result.reply });
+            persist();
             typing.remove();
-            appendMessage(reply, 'assistant');
-            history.push({ role: 'assistant', content: reply });
-            history = history.slice(-HISTORY_LIMIT);
-            followupButton.hidden = false;
+            renderMessage(result.reply, 'assistant');
         } catch (error) {
             typing.remove();
-            appendMessage(error instanceof Error ? error.message : 'Celeste is unavailable right now. Please try again shortly.', 'error');
-            history.pop();
+            if (error instanceof Error && error.message === 'offline') {
+                renderOfflineMessage();
+            } else {
+                renderMessage(error instanceof Error ? error.message : 'Celeste could not send that message. Please try again.', 'error');
+            }
         } finally {
             pending = false;
             sendButton.disabled = false;
@@ -321,8 +230,7 @@ function installCeleste() {
 
     launcher.addEventListener('click', openChat);
     closeButton.addEventListener('click', closeChat);
-    clearButton.addEventListener('click', resetConversation);
-    followupButton.addEventListener('click', showLeadForm);
+    resetButton.addEventListener('click', resetChat);
     form.addEventListener('submit', event => {
         event.preventDefault();
         sendMessage(input.value);
@@ -337,9 +245,9 @@ function installCeleste() {
         input.style.height = 'auto';
         input.style.height = `${Math.min(input.scrollHeight, 120)}px`;
     });
-    quickActions.addEventListener('click', event => {
-        const button = event.target.closest('button');
-        if (button) sendMessage(button.textContent === 'Talk to CTS' ? 'I would like to talk to CTS about a consultation.' : button.textContent);
+    quickReplies.addEventListener('click', event => {
+        const chip = event.target.closest('button');
+        if (chip) sendMessage(chip.textContent || '');
     });
     document.addEventListener('keydown', event => {
         if (panel.hidden) return;
@@ -349,7 +257,7 @@ function installCeleste() {
         }
         if (event.key !== 'Tab') return;
         const focusable = [...panel.querySelectorAll('button:not(:disabled), textarea:not(:disabled), a[href]')]
-            .filter(element => !element.hidden && element.getClientRects().length);
+            .filter(node => !node.hidden && node.getClientRects().length);
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
         if (event.shiftKey && document.activeElement === first) {
@@ -361,11 +269,14 @@ function installCeleste() {
         }
     });
 
-    resetConversation();
+    renderHistory();
+    quickReplies.hidden = messages.length > 0;
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', installCeleste, { once: true });
-} else {
-    installCeleste();
+if (window.self === window.top) {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', installCeleste, { once: true });
+    } else {
+        installCeleste();
+    }
 }

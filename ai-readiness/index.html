@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CTS | AI Readiness Assessment</title>
+    <style>
+        :root {
+            font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+            color: #f5f5f5;
+            background: #0b0c10
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(ellipse at 80% 0%, #382a0c 0, transparent 38%), #0b0c10
+        }
+
+        .wrap {
+            max-width: 980px;
+            margin: auto;
+            padding: 26px 18px 60px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            letter-spacing: 2px;
+            font-weight: 700
+        }
+
+        .logo {
+            font-size: 29px;
+            font-weight: 900;
+            font-style: italic;
+            color: #f2be41
+        }
+
+        .hero {
+            padding: 38px 0 22px
+        }
+
+        h1 {
+            font-size: clamp(30px, 5vw, 53px);
+            line-height: 1.07;
+            margin: 0 0 15px
+        }
+
+        h1 span,
+        .gold {
+            color: #f3bd3c
+        }
+
+        p {
+            color: #c9c9ce;
+            line-height: 1.6
+        }
+
+        .sub {
+            max-width: 700px
+        }
+
+        .panel {
+            background: #15171e;
+            border: 1px solid #34333a;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 14px 50px #0004
+        }
+
+        .progress {
+            height: 8px;
+            background: #303039;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 18px 0 25px
+        }
+
+        .progress>div {
+            height: 100%;
+            background: linear-gradient(90deg, #b57b16, #f8d46a);
+            transition: width .2s
+        }
+
+        .muted {
+            color: #a7a7b1;
+            font-size: 14px
+        }
+
+        .question {
+            font-size: 24px;
+            font-weight: 750;
+            margin: 10px 0 19px
+        }
+
+        .options {
+            display: grid;
+            gap: 11px
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            text-align: left;
+            border: 1px solid #414149;
+            background: #1d2028;
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            line-height: 1.5
+        }
+
+        .option:hover,
+        .option.selected {
+            border-color: #e6b53e;
+            background: #332b19
+        }
+
+        .option .circle {
+            height: 19px;
+            width: 19px;
+            border: 2px solid #b6b6bd;
+            border-radius: 50%;
+            flex: none;
+            margin-top: 1px
+        }
+
+        .option.selected .circle {
+            border: 6px solid #f0c04b
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap
+        }
+
+        button,
+        .btn {
+            cursor: pointer;
+            border: 0;
+            border-radius: 10px;
+            padding: 13px 20px;
+            font-size: 15px;
+            font-weight: 750;
+            text-decoration: none;
+            display: inline-block
+        }
+
+        button.primary,
+        .btn.primary {
+            background: linear-gradient(100deg, #e8a72c, #ffdb75);
+            color: #16110a
+        }
+
+        button.secondary,
+        .btn.secondary {
+            background: #292b34;
+            color: #eee;
+            border: 1px solid #55545b
+        }
+
+        button:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        input {
+            background: #22252c;
+            border: 1px solid #51515a;
+            border-radius: 9px;
+            color: white;
+            padding: 12px;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 7px
+        }
+
+        .field {
+            margin: 16px 0
+        }
+
+        .field label {
+            font-size: 14px;
+            color: #e7e7eb
+        }
+
+        .score {
+            font-size: 65px;
+            font-weight: 900;
+            color: #f5c34c
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px
+        }
+
+        .mini {
+            padding: 16px;
+            border: 1px solid #393940;
+            border-radius: 12px;
+            background: #1b1e26
+        }
+
+        .mini b {
+            color: #f5c34c
+        }
+
+        .mini p {
+            margin-bottom: 0
+        }
+
+        .section {
+            margin: 27px 0 12px;
+            font-size: 20px
+        }
+
+        .hidden {
+            display: none !important
+        }
+
+        .small {
+            font-size: 12px
+        }
+
+        .footer {
+            margin-top: 24px;
+            color: #999;
+            text-align: center;
+            font-size: 12px
+        }
+
+        .pill {
+            background: #34290e;
+            border: 1px solid #8d6a1c;
+            color: #f7cc67;
+            padding: 7px 12px;
+            border-radius: 50px;
+            display: inline-block;
+            font-size: 13px
+        }
+
+        .list {
+            padding-left: 20px;
+            color: #ddd;
+            line-height: 1.8
+        }
+
+        .cta {
+            border: 1px solid #8b6c29;
+            background: linear-gradient(120deg, #302411, #17181f);
+            padding: 22px;
+            border-radius: 14px;
+            margin-top: 22px
+        }
+
+        .error {
+            color: #ffb7a5
+        }
+
+        .printonly {
+            display: none
+        }
+
+        @media(max-width:620px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            .panel {
+                padding: 18px
+            }
+
+            .wrap {
+                padding: 18px 12px 40px
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: #111
+            }
+
+            .wrap {
+                max-width: none
+            }
+
+            .hero,
+            .controls,
+            .cta,
+            .footer,
+            .noprint {
+                display: none !important
+            }
+
+            .panel,
+            .mini {
+                background: white;
+                color: #111;
+                box-shadow: none;
+                border-color: #ccc
+            }
+
+            .mini p,
+            p,
+            .list {
+                color: #222
+            }
+
+            .printonly {
+                display: block
+            }
+
+            .score {
+                color: #9d6b05
+            }
+
+            h2 {
+                break-after: avoid
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <header class="brand">
+            <div class="logo">CTS</div>
+            <div>CELESTIAL<br>TECHNICAL SOLUTIONS</div>
+        </header>
+        <section class="hero">
+            <div class="pill">Free business self-assessment</div>
+            <h1>Is Your Business <span>Ready for AI?</span></h1>
+            <p class="sub">Discover your AI readiness score, practical automation opportunities, and a prioritized
+                action plan in approximately 5 minutes.</p>
+        </section>
+        <section id="welcome" class="panel">
+            <h2>Start your free assessment</h2>
+            <p>Answer 12 questions across strategy, data, technology, security, and operations. You'll get an instant,
+                printable summary. No account required.</p>
+            <div class="field"><label for="business">Business name (optional)</label><input id="business"
+                    maxlength="100" placeholder="Your business"></div>
+            <div class="field"><label for="industry">Industry (optional)</label><input id="industry" maxlength="80"
+                    placeholder="e.g., professional services, retail"></div><button class="primary" id="start">Start
+                Assessment →</button>
+            <p class="small">Your responses stay in your browser. Nothing is uploaded to CTS by this tool.</p>
+        </section>
+        <section id="quiz" class="panel hidden" aria-live="polite">
+            <div class="muted" id="counter"></div>
+            <div class="progress">
+                <div id="bar"></div>
+            </div>
+            <div class="muted" id="category"></div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="controls"><button class="secondary" id="back">← Back</button><button class="primary" id="next"
+                    disabled>Next →</button></div>
+        </section>
+        <section id="results" class="panel hidden">
+            <div class="printonly">
+                <h1>CTS AI Readiness Summary</h1>
+            </div>
+            <div class="pill">Your free AI readiness report</div>
+            <h2 id="resultTitle"></h2>
+            <div class="score" id="score"></div>
+            <p id="tier"></p>
+            <p id="interpretation"></p>
+            <h3 class="section">Readiness by area</h3>
+            <div class="grid" id="dimensions"></div>
+            <h3 class="section">Top recommendations</h3>
+            <ol class="list" id="recommendations"></ol>
+            <h3 class="section">Your 30-day starter roadmap</h3>
+            <div class="grid" id="roadmap"></div>
+            <p class="small">This is a directional self-assessment, not a technical audit, security certification, or
+                guarantee of savings. Recommendations depend on your answers and should be validated before
+                implementation.</p>
+            <div class="controls noprint"><button class="secondary" id="restart">Retake assessment</button><button
+                    class="primary" id="print">Save free report as PDF</button></div>
+            <div class="cta noprint">
+                <h2>Want a tailored AI implementation roadmap?</h2>
+                <p>Upgrade to a CTS-led assessment for a deeper technology review, prioritized use cases, implementation
+                    guidance, and a working session. Scope and pricing are confirmed before purchase.</p><a
+                    class="btn primary" id="upgrade" href="#">Request a paid assessment →</a>
+                <p class="small">This button prepares an email inquiry; it does not collect payment or place an order.
+                </p>
+            </div>
+        </section>
+        <div class="footer">© Celestial Technical Solutions · <a style="color:#f4c14b"
+                href="https://celestechsolutions.com" target="_blank" rel="noopener">celestechsolutions.com</a></div>
+    </main>
+    <script>
+        'use strict';
+        // Replace with your working sales inbox before publishing. The email is intentionally not guessed.
+        const SALES_EMAIL = '';
+        const questions = [
+            { d: 'Strategy', q: 'How clearly have you defined the business problems AI should solve?', o: ['No defined use cases', 'A few ideas, not prioritized', 'Prioritized opportunities with goals', 'Documented use cases with measurable success metrics'] },
+            { d: 'Strategy', q: 'Is someone accountable for AI initiatives and outcomes?', o: ['No owner', 'Informal interest only', 'Named owner with some time allocated', 'Owner, budget, and decision process established'] },
+            { d: 'Data', q: 'How accessible is the information needed to automate your workflows?', o: ['Mostly paper or scattered files', 'Multiple disconnected tools', 'Mostly digital, some integrations', 'Well-organized, governed, accessible data'] },
+            { d: 'Data', q: 'How reliable and consistent is your business data?', o: ['Frequent errors or duplicates', 'Quality is unknown', 'Mostly accurate with occasional cleanup', 'Validated and routinely monitored'] },
+            { d: 'Technology', q: 'How modern and integrated are your current business systems?', o: ['Mostly manual or outdated', 'Some digital systems, little integration', 'Modern tools with partial integration', 'Supported systems with reliable integrations/APIs'] },
+            { d: 'Technology', q: 'What capacity do you have to test and deploy new software?', o: ['No technical capacity', 'Occasional outside help', 'Some internal or contracted support', 'Established technical team and deployment process'] },
+            { d: 'Security', q: 'How well are access permissions and sensitive data protected?', o: ['No consistent controls', 'Basic passwords and ad hoc access', 'MFA, permissions, and backups in place', 'Documented controls, monitoring, and reviews'] },
+            { d: 'Security', q: 'Do you have rules for using customer or confidential data with AI tools?', o: ['No rules', 'Informal guidance', 'Written policy or approval process', 'Policy, training, and regular compliance review'] },
+            { d: 'Operations', q: 'How well documented are your repetitive business workflows?', o: ['Not documented', 'Some informal notes', 'Key workflows documented', 'Documented, measured, and routinely improved'] },
+            { d: 'Operations', q: 'How often does your team perform repetitive, rules-based work?', o: ['We have not identified it', 'Some tasks, not measured', 'Several clear automation candidates', 'Tasks measured and prioritized by impact'] },
+            { d: 'People', q: 'How prepared is your team to adopt AI-assisted workflows?', o: ['Little awareness or significant resistance', 'Some curiosity, no training', 'Several interested users with basic training', 'Training, feedback, and adoption champions'] },
+            { d: 'People', q: 'How do you measure the value of technology improvements?', o: ['We do not measure outcomes', 'Anecdotal feedback', 'Track time or costs for some processes', 'Baseline KPIs and post-launch reviews'] }
+        ];
+        const dims = ['Strategy', 'Data', 'Technology', 'Security', 'Operations', 'People'];
+        const advice = { Strategy: 'Select one high-value business problem, name an owner, and define a measurable success target.', Data: 'Inventory key data sources, remove duplicates, and establish clear ownership and access rules.', Technology: 'Review software integrations and confirm that your systems can support a small pilot.', Security: 'Establish MFA, least-privilege access, and a written policy for confidential data in AI tools.', Operations: 'Map one repetitive workflow and quantify time spent before considering automation.', People: 'Train a small pilot team and measure time saved, accuracy, and user satisfaction.' };
+        let answers = Array(questions.length).fill(null), step = 0;
+        const $ = id => document.getElementById(id); function show(id) { ['welcome', 'quiz', 'results'].forEach(x => $(x).classList.toggle('hidden', x !== id)) }
+        function render() { const q = questions[step]; $('counter').textContent = `Question ${step + 1} of ${questions.length}`; $('bar').style.width = `${(step / questions.length) * 100}%`; $('category').textContent = q.d; $('question').textContent = q.q; $('options').replaceChildren(); q.o.forEach((label, i) => { const b = document.createElement('button'); b.className = 'option' + (answers[step] === i ? ' selected' : ''); b.type = 'button'; b.setAttribute('aria-pressed', String(answers[step] === i)); const dot = document.createElement('span'); dot.className = 'circle'; const t = document.createElement('span'); t.textContent = label; b.append(dot, t); b.onclick = () => { answers[step] = i; render() }; $('options').append(b) }); $('back').textContent = step ? '← Back' : '← Start'; $('next').disabled = answers[step] === null; $('next').textContent = step === questions.length - 1 ? 'View My Results →' : 'Next →' }
+        $('start').onclick = () => { step = 0; show('quiz'); render() }; $('back').onclick = () => { if (step === 0) show('welcome'); else { step--; render() } }; $('next').onclick = () => { if (answers[step] === null) return; if (step < questions.length - 1) { step++; render() } else results() };
+        function addText(parent, tag, value) { const el = document.createElement(tag); el.textContent = value; parent.append(el); return el }
+        function results() {
+            show('results'); const name = $('business').value.trim() || 'Your business'; $('resultTitle').textContent = name + ' — readiness overview'; const total = answers.reduce((a, b) => a + b, 0), score = Math.round(total / (questions.length * 3) * 100); $('score').textContent = score + '/100'; let tier, desc; if (score < 35) { tier = 'Foundational'; desc = 'Build basic data, security, and workflow foundations before a broader AI rollout.' } else if (score < 60) { tier = 'Developing'; desc = 'Several prerequisites are in place. Start with a small, controlled pilot.' } else if (score < 80) { tier = 'Emerging readiness'; desc = 'You have promising capabilities. Prioritize a measurable pilot and close remaining gaps.' } else { tier = 'Advanced readiness'; desc = 'Your answers suggest strong foundations. Validate governance and scale proven use cases carefully.' } $('tier').textContent = 'Readiness level: ' + tier; $('interpretation').textContent = desc;
+            const scores = dims.map(d => { const indices = questions.map((q, i) => q.d === d ? i : -1).filter(i => i >= 0); return { d, p: Math.round(indices.reduce((a, i) => a + answers[i], 0) / (indices.length * 3) * 100) } }); $('dimensions').replaceChildren(); scores.forEach(x => { const box = document.createElement('div'); box.className = 'mini'; addText(box, 'b', x.d + ' · ' + x.p + '/100'); addText(box, 'p', x.p < 50 ? 'Needs attention' : x.p < 80 ? 'Developing capability' : 'Strong foundation'); $('dimensions').append(box) }); const weakest = [...scores].sort((a, b) => a.p - b.p).slice(0, 3); $('recommendations').replaceChildren(); weakest.forEach(x => addText($('recommendations'), 'li', advice[x.d])); $('roadmap').replaceChildren();[['Days 1–7', 'Confirm goals, appoint an owner, and document one high-friction workflow.'], ['Days 8–14', 'Review data quality, access controls, and integration requirements.'], ['Days 15–21', 'Design a limited pilot with human review and measurable success criteria.'], ['Days 22–30', 'Evaluate pilot results, document risks, and decide whether to expand.']].forEach(([h, p]) => { const box = document.createElement('div'); box.className = 'mini'; addText(box, 'b', h); addText(box, 'p', p); $('roadmap').append(box) });
+            const subject = 'CTS paid AI readiness assessment inquiry'; const body = `Hello CTS,\n\nI'd like to discuss a paid AI readiness assessment.\nBusiness: ${name}\nIndustry: ${$('industry').value.trim() || 'Not specified'}\nSelf-assessment score: ${score}/100 (${tier})\n\nPlease send scope, pricing, and next steps.`; const link = $('upgrade'); if (SALES_EMAIL) { link.href = `mailto:${SALES_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`; link.textContent = 'Request a paid assessment →' } else { link.href = 'https://celestechsolutions.com'; link.target = '_blank'; link.rel = 'noopener'; link.textContent = 'Contact CTS about a paid assessment →' } window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+        $('print').onclick = () => window.print(); $('restart').onclick = () => { answers = Array(questions.length).fill(null); step = 0; show('welcome'); window.scrollTo({ top: 0, behavior: 'smooth' }) };
+    </script>
+    <script type="module" src="/celeste.js"></script>
+</body>
+
+</html>

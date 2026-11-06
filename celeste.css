@@ -5,95 +5,58 @@
 
 .celeste-widget {
     --celeste-gold: #be9e44;
-    --celeste-light-gold: #e5d9b6;
-    --celeste-secondary-gold: #d8c690;
+    --celeste-pale-gold: #e5d9b6;
     position: fixed;
-    z-index: 1000;
+    z-index: 9999;
     right: 24px;
     bottom: 24px;
     color: #f7f4e9;
-    font-family: Inter, Arial, sans-serif;
+    font-family: inherit;
     line-height: 1.45;
 }
 
 .celeste-launcher {
     display: flex;
     align-items: center;
-    gap: 11px;
-    min-height: 62px;
-    padding: 9px 19px 9px 11px;
-    border: 1px solid rgba(229, 217, 182, .6);
-    border-radius: 18px;
+    gap: 10px;
+    min-height: 56px;
+    padding: 8px 17px 8px 10px;
+    border: 1px solid rgba(229, 217, 182, .72);
+    border-radius: 14px;
     color: #fff;
-    background: linear-gradient(145deg, #191814, #080808 75%);
-    box-shadow: 0 9px 32px rgba(0, 0, 0, .55), 0 0 20px rgba(190, 158, 68, .17);
+    background: #11110f;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, .38);
     cursor: pointer;
-    text-align: left;
-    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
 }
 
-.celeste-launcher:hover {
-    transform: translateY(-2px);
-    border-color: var(--celeste-gold);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, .6), 0 0 25px rgba(190, 158, 68, .28);
-}
-
-.celeste-launcher-mark,
-.celeste-avatar {
+.celeste-launcher-mark {
     display: grid;
     place-items: center;
-    flex: 0 0 auto;
-    width: 40px;
-    height: 40px;
-    border: 1px solid rgba(229, 217, 182, .62);
-    border-radius: 13px;
-    color: #0d0c09;
+    width: 38px;
+    aspect-ratio: 1;
+    border-radius: 11px;
+    color: #111;
     background: linear-gradient(145deg, #e5d9b6, #be9e44);
-    font-size: 19px;
-    font-weight: 900;
-}
-
-.celeste-launcher-copy {
-    display: grid;
-    gap: 1px;
-}
-
-.celeste-launcher-copy strong {
-    color: #fff;
-    font-size: 14px;
-    letter-spacing: .025em;
-}
-
-.celeste-launcher-copy span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--celeste-secondary-gold);
-    font-size: 11px;
-}
-
-.celeste-launcher-copy i {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #78c58b;
-    box-shadow: 0 0 8px rgba(120, 197, 139, .7);
+    font-size: 18px;
 }
 
 .celeste-panel {
     position: absolute;
     right: 0;
-    bottom: 78px;
+    bottom: 70px;
     display: flex;
     flex-direction: column;
-    width: min(400px, calc(100vw - 32px));
-    height: min(600px, calc(100dvh - 112px));
-    min-height: 430px;
+    width: min(390px, calc(100vw - 32px));
+    height: min(620px, calc(100dvh - 104px));
+    min-height: 380px;
     overflow: hidden;
-    border: 1px solid rgba(190, 158, 68, .58);
-    border-radius: 18px;
+    border: 1px solid rgba(190, 158, 68, .62);
+    border-radius: 14px;
     background: #11110f;
-    box-shadow: 0 18px 60px rgba(0, 0, 0, .68), 0 0 27px rgba(190, 158, 68, .12);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, .55);
 }
 
 .celeste-panel[hidden] {
@@ -105,81 +68,68 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    min-height: 78px;
+    min-height: 68px;
     padding: 12px 14px;
     border-bottom: 1px solid #343128;
-    background: linear-gradient(110deg, #1c1a15, #11110f 74%);
+    background: #1a1915;
 }
 
-.celeste-identity {
+.celeste-title-wrap {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 9px;
     min-width: 0;
 }
 
-.celeste-avatar {
-    width: 42px;
-    height: 42px;
+.celeste-title-wrap h2 {
+    margin: 0;
+    color: var(--celeste-pale-gold);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.celeste-online {
+    width: 8px;
+    aspect-ratio: 1;
+    flex: 0 0 auto;
     border-radius: 50%;
-    font-size: 17px;
-}
-
-.celeste-titles {
-    display: grid;
-    min-width: 0;
-}
-
-.celeste-titles strong {
-    color: var(--celeste-light-gold);
-    font-size: 13px;
-    letter-spacing: .13em;
-}
-
-.celeste-titles span {
-    overflow: hidden;
-    color: #fff;
-    font-size: 11px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.celeste-titles small {
-    color: #aaa38e;
-    font-size: 10px;
+    background: #78c58b;
+    box-shadow: 0 0 8px rgba(120, 197, 139, .5);
 }
 
 .celeste-header-actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
 }
 
-.celeste-clear,
+.celeste-reset,
 .celeste-close {
     border: 1px solid #514a37;
-    color: var(--celeste-light-gold);
-    background: #1a1915;
+    color: var(--celeste-pale-gold);
+    background: #11110f;
     cursor: pointer;
+    font: inherit;
 }
 
-.celeste-clear {
-    padding: 6px 9px;
+.celeste-reset {
+    min-height: 34px;
+    padding: 0 9px;
     border-radius: 7px;
     font-size: 11px;
 }
 
 .celeste-close {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
     font-size: 22px;
     line-height: 1;
 }
 
-.celeste-body {
+.celeste-transcript {
     display: flex;
-    flex: 1;
+    flex: 1 1 auto;
     flex-direction: column;
     gap: 12px;
     overflow-y: auto;
@@ -189,10 +139,10 @@
 }
 
 .celeste-message {
-    max-width: 91%;
-    padding: 11px 13px;
+    max-width: 92%;
+    padding: 10px 12px;
     border: 1px solid #35332c;
-    border-radius: 13px;
+    border-radius: 12px;
     color: #f1eee5;
     font-size: 13px;
     line-height: 1.55;
@@ -222,37 +172,38 @@
     background: #2a1916;
 }
 
+.celeste-message-error a {
+    color: #f4d78f;
+    text-decoration: underline;
+}
+
 .celeste-typing {
     color: #c5b985;
     font-style: italic;
 }
 
-.celeste-quick-actions {
+.celeste-quick-replies {
     display: flex;
     flex-wrap: wrap;
     gap: 7px;
     padding: 0 13px 12px;
 }
 
-.celeste-quick-actions[hidden] {
+.celeste-quick-replies[hidden] {
     display: none;
 }
 
 .celeste-chip {
-    padding: 8px 10px;
+    max-width: 100%;
+    padding: 7px 9px;
     border: 1px solid #675a36;
     border-radius: 999px;
-    color: var(--celeste-light-gold);
+    color: var(--celeste-pale-gold);
     background: #1a1915;
     cursor: pointer;
     font: inherit;
     font-size: 11px;
-    transition: background .15s ease, border-color .15s ease;
-}
-
-.celeste-chip:hover {
-    border-color: var(--celeste-gold);
-    background: #29251b;
+    text-align: left;
 }
 
 .celeste-footer {
@@ -261,7 +212,14 @@
     background: #151410;
 }
 
-.celeste-privacy {
+.celeste-human {
+    display: inline-block;
+    margin: 0 2px 6px;
+    color: var(--celeste-pale-gold);
+    font-size: 11px;
+}
+
+.celeste-disclaimer {
     margin: 0 2px 8px;
     color: #b9b3a2;
     font-size: 10px;
@@ -279,10 +237,10 @@
     min-width: 0;
     max-height: 120px;
     min-height: 42px;
-    padding: 11px 12px;
+    padding: 10px 11px;
     resize: none;
     border: 1px solid #504a39;
-    border-radius: 10px;
+    border-radius: 9px;
     outline: none;
     color: #fff;
     background: #0d0d0c;
@@ -300,11 +258,11 @@
 }
 
 .celeste-send {
-    min-width: 62px;
+    min-width: 58px;
     min-height: 42px;
-    padding: 0 12px;
+    padding: 0 11px;
     border: 1px solid #c2a147;
-    border-radius: 10px;
+    border-radius: 9px;
     color: #111;
     background: linear-gradient(140deg, #e5d9b6, #be9e44);
     cursor: pointer;
@@ -319,133 +277,37 @@
     opacity: .62;
 }
 
-.celeste-followup {
-    align-self: flex-start;
-    margin: 0 14px 12px;
-    padding: 9px 12px;
-    border: 1px solid var(--celeste-gold);
-    border-radius: 9px;
-    color: #111;
-    background: var(--celeste-secondary-gold);
-    cursor: pointer;
-    font: inherit;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.celeste-followup[hidden] {
-    display: none;
-}
-
-.celeste-lead-form {
-    display: grid;
-    flex: 0 0 auto;
-    gap: 10px;
-    margin-top: 4px;
-    padding: 14px;
-    border: 1px solid #4b432f;
-    border-radius: 12px;
-    background: #171611;
-}
-
-.celeste-lead-form h3,
-.celeste-lead-form p {
-    margin: 0;
-}
-
-.celeste-lead-form h3 {
-    color: var(--celeste-light-gold);
-    font-size: 15px;
-}
-
-.celeste-lead-intro,
-.celeste-form-status {
-    color: #c3bdad;
-    font-size: 11px;
-}
-
-.celeste-lead-field {
-    display: grid;
-    gap: 4px;
-    color: #eee8d7;
-    font-size: 11px;
-}
-
-.celeste-lead-field input,
-.celeste-lead-field textarea,
-.celeste-lead-field select {
-    width: 100%;
-    min-height: 36px;
-    padding: 8px 9px;
-    border: 1px solid #514a39;
-    border-radius: 7px;
-    color: #fff;
-    background: #0e0e0c;
-    font: inherit;
-    font-size: 12px;
-}
-
-.celeste-lead-field textarea {
-    resize: vertical;
-}
-
-.celeste-consent {
-    display: flex;
-    align-items: flex-start;
-    gap: 7px;
-    color: #d2cdbd;
-    font-size: 10px;
-}
-
-.celeste-consent input {
-    margin: 2px 0 0;
-    accent-color: var(--celeste-gold);
-}
-
-.celeste-lead-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.celeste-cancel {
-    min-height: 42px;
-    padding: 0 12px;
-    border: 1px solid #514a39;
-    border-radius: 10px;
-    color: var(--celeste-light-gold);
-    background: #1a1915;
-    cursor: pointer;
-}
-
-.celeste-lead-success {
-    color: #d8c690;
-    font-size: 13px;
-}
-
-.celeste-widget button:focus-visible {
+.celeste-widget button:focus-visible,
+.celeste-widget a:focus-visible {
     outline: 2px solid #e5d9b6;
     outline-offset: 3px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 479px) {
     .celeste-widget {
         right: 14px;
         bottom: 14px;
     }
 
-    .celeste-panel {
-        position: fixed;
-        z-index: 1001;
-        inset: 8px;
-        width: auto;
-        height: auto;
-        min-height: 0;
-        border-radius: 14px;
+    .celeste-widget.is-open {
+        inset: 0;
+        width: 100%;
+        height: 100%;
     }
 
-    .celeste-launcher {
-        min-height: 56px;
-        padding-right: 15px;
+    .celeste-widget.is-open .celeste-launcher {
+        display: none;
+    }
+
+    .celeste-panel {
+        position: fixed;
+        z-index: 10000;
+        inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        min-height: 0;
+        border: 0;
+        border-radius: 0;
     }
 
     .celeste-footer {
@@ -455,8 +317,12 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .celeste-launcher,
-    .celeste-chip {
-        transition: none;
+    .celeste-widget *,
+    .celeste-widget *::before,
+    .celeste-widget *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
     }
 }

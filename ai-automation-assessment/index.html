@@ -127,76 +127,12 @@
 
         <section class="assessment-form-section">
             <div class="assessment-container">
-                <div class="form-wrapper">
-                    <div class="form-content">
-                        <h2>Request Your Free Assessment</h2>
-                        <p>Tell us about your business, and we'll schedule a time to dive deep into your opportunities.
-                        </p>
-
-                        <form id="assessmentForm" name="assessment" method="POST" data-netlify="true">
-                            <input type="hidden" name="form-name" value="assessment">
-
-                            <div class="form-row">
-                                <input type="text" name="name" placeholder="Full Name" required autocomplete="name">
-                                <input type="email" name="email" placeholder="Email" required autocomplete="email">
-                            </div>
-
-                            <div class="form-row">
-                                <input type="text" name="company" placeholder="Company Name"
-                                    autocomplete="organization">
-                                <input type="tel" name="phone" placeholder="Phone Number" autocomplete="tel">
-                            </div>
-
-                            <select name="companySize" required>
-                                <option value="">Select Company Size</option>
-                                <option value="1-10">1-10 employees</option>
-                                <option value="11-50">11-50 employees</option>
-                                <option value="51-200">51-200 employees</option>
-                                <option value="201-500">201-500 employees</option>
-                                <option value="501+">501+ employees</option>
-                            </select>
-
-                            <select name="primaryChallenge" required>
-                                <option value="">What's your primary challenge?</option>
-                                <option value="cost-reduction">Reduce operational costs</option>
-                                <option value="manual-processes">Eliminate manual processes</option>
-                                <option value="lead-follow-up">Improve lead follow-up speed</option>
-                                <option value="team-scaling">Scale team without hiring</option>
-                                <option value="customer-support">Improve customer support</option>
-                                <option value="data-accuracy">Improve data accuracy</option>
-                                <option value="other">Other / Multiple challenges</option>
-                            </select>
-
-                            <textarea name="message"
-                                placeholder="Tell us about your business and what you're trying to solve (optional)"
-                                rows="4"></textarea>
-
-                            <button type="submit" class="btn btn-gold btn-large">Request Assessment</button>
-                            <p class="form-disclaimer">We'll review your information and reach out within 24 business
-                                hours to schedule your assessment call.</p>
-                        </form>
-                        <div id="assessmentStatus"></div>
-                    </div>
-
-                    <div class="form-sidebar">
-                        <div class="sidebar-box">
-                            <h4>⏱ Time Commitment</h4>
-                            <p>Initial assessment call: 30 minutes</p>
-                        </div>
-                        <div class="sidebar-box">
-                            <h4>💵 Cost</h4>
-                            <p>Completely free. No credit card required.</p>
-                        </div>
-                        <div class="sidebar-box">
-                            <h4>📋 What to Expect</h4>
-                            <p>Custom roadmap, cost-benefit analysis, and clear next steps.</p>
-                        </div>
-                        <div class="sidebar-box">
-                            <h4>🔒 Confidentiality</h4>
-                            <p>Your business details stay private. No NDA required.</p>
-                        </div>
-                    </div>
-                </div>
+                <h2>Complete Your AI Readiness Assessment</h2>
+                <p>Answer a few questions to identify practical AI and automation opportunities for your business.</p>
+                <iframe src="/ai-readiness/" title="CTS AI Readiness Assessment" width="100%" height="850"
+                    style="border:0; border-radius:12px;" loading="lazy"></iframe>
+                <p class="form-disclaimer">Having trouble with the embedded form? <a href="/ai-readiness/"
+                        target="_blank" rel="noopener noreferrer">Open the assessment directly</a>.</p>
             </div>
         </section>
 
