@@ -28,8 +28,7 @@
   status = 200
   force = true
 
-# Optional redirect for single-page app behavior if you add client-side routing later.
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# NOTE: a catch-all redirect from "/*" to "/index.html" was removed on purpose.
+# This site is multi-page, not a single-page app, so that rule made every unknown URL
+# return the homepage with HTTP 200 instead of a real 404 (soft 404s for search engines).
+# Re-add it only if client-side routing is introduced later.
