@@ -22,3 +22,21 @@ Netlify setup:
 4. Configure the Celeste environment variables described in `CELESTE_INTEGRATION.md`.
 5. Add your custom domain and update DNS as directed by Netlify.
 
+## Celeste chat widget setup
+
+The floating chat widget calls `netlify/functions/celeste.ts`, which proxies to the Base44
+agent API. It needs two environment variables in Netlify (Site configuration, Environment
+variables). Without them the widget shows "Celeste is offline right now".
+
+| Variable | Value |
+| --- | --- |
+| `BASE44_API_KEY` | Agent API key from the Celeste agent editor, Developer / API Docs panel |
+| `BASE44_BASE_URL` | `https://app.base44.com/api/agents/6a512bd87e7e4c489690fbb6` |
+
+Set both, then redeploy. The key is server-side only and must never be added to the
+front-end files.
+
+## Contact form
+
+The contact form posts to Netlify Forms (form name `contact`). Add a form notification
+address in Netlify under Forms, Form notifications, so submissions reach a mailbox.
