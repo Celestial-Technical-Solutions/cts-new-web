@@ -16,6 +16,12 @@ type NetlifyContext = {
     ip?: string;
 };
 
+// Verified against the Base44 Superagents API reference:
+//   POST {base}/conversations            -> { id, title, metadata, created_date, updated_date }
+//   POST {base}/conversations/{id}/messages  body { content } -> { id, role, content, ... }
+// Auth is a personal API key or personal access token sent as "Authorization: Bearer <token>".
+// Workspace API keys are not accepted by these endpoints.
+const DEFAULT_BASE_URL = 'https://app.base44.com/api/agents/6a512bd87e7e4c489690fbb6';
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_PAGE_VALUE_LENGTH = 300;
 const RATE_WINDOW_MS = 60 * 60 * 1000;
@@ -57,7 +63,6 @@ function cleanPageValue(value: unknown) {
 }
 
 function mapAgentResponse(data: unknown, kind: AgentResponseKind): MappedAgentResponse {
-    // TODO: confirm field names against the Base44 Developer/API Docs panel.
     if (!data || typeof data !== 'object') return {};
 
     const root = data as Record<string, unknown>;
@@ -125,37 +130,34 @@ export default async (request: Request, context: NetlifyContext) => {
         return jsonResponse(400, { error: 'Please send a valid message.' });
     }
 
-    const apiKey = process.env.BASE44_API_KEY;
-    const baseUrl = process.env.BASE44_BASE_URL?.replace(/\/+$/, '');
-    if (!apiKey || !baseUrl) {
-        console.error('Celeste Base44 configuration is incomplete.');
-        return jsonResponse(502, { error: 'Celeste is offline right now. Please email cparham@celestechsolutions.com and we’ll respond today.' });
+    const apiKey = (process.env.BASE44_API_KEY || '').trim();
+    const baseUrl = (process.env.BASE44_BASE_URL || DEFAULT_BASE_URL).trim().replace(/\/+$/, '');
+    if (!apiKey) {
+        console.error('Celeste is not configured: BASE44_API_KEY is missing from the Netlify environment.');
+        return jsonResponse(503, { error: 'Celeste is offline right now. Please email cparham@celestechsolutions.com and we’ll respond today.' });
     }
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 60_000);
 
     try {
-        const headers = { api_key: apiKey, Accept: 'application/json', 'Content-Type': 'application/json' };
+        const headers = {
+            Authorization: `Bearer ${apiKey}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        };
         let activeConversationId = conversationId;
 
         if (!activeConversationId) {
-            const conversationsResponse = await fetch(`${baseUrl}/conversations`, {
-                method: 'GET',
+            // Documented as create-or-return: calling it again returns the same conversation,
+            // so there is no need to list conversations first (that endpoint also rejects API keys).
+            const createResponse = await fetch(`${baseUrl}/conversations`, {
+                method: 'POST',
                 headers,
+                body: JSON.stringify({ metadata: { source: 'celestechsolutions.com' } }),
                 signal: controller.signal
             });
-            const conversations = mapAgentResponse(await readJson(conversationsResponse), 'conversation');
-            activeConversationId = conversations.conversationId || '';
-
-            if (!activeConversationId) {
-                const createResponse = await fetch(`${baseUrl}/conversations`, {
-                    method: 'POST',
-                    headers,
-                    signal: controller.signal
-                });
-                activeConversationId = mapAgentResponse(await readJson(createResponse), 'conversation').conversationId || '';
-            }
+            activeConversationId = mapAgentResponse(await readJson(createResponse), 'conversation').conversationId || '';
         }
 
         if (!activeConversationId) throw new Error('Base44 did not return a conversation identifier.');
